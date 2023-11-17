@@ -54,14 +54,14 @@ public class RedAudienceAutonomous {
                                         new Action(new SearchTarget(this.opMode),this.opMode)
                                 )
                         ,this.opMode),
-                        new Action(new NavigateRA1(this.opMode),this.opMode),
+                        new Action(new NavigateRA1(this.opMode),this.opMode)/*,
                         //new Action(new ScoreSpikePixel(this.opMode),this.opMode),
                         new Action(new NavigateRA2(this.opMode),this.opMode),
-                      //  new Action(new NavigateRA3(this.opMode),this.opMode),/**/
+                      //  new Action(new NavigateRA3(this.opMode),this.opMode),
                         new Action(new NavigateRA4(this.opMode),this.opMode),
                         new Action(new NavigateRA5(this.opMode),this.opMode),
                      //   new Action(new ScoreBoardPixel(this.opMode),this.opMode),
-                        new Action(new NavigateRA6(this.opMode),this.opMode)/**/
+                        new Action(new NavigateRA6(this.opMode),this.opMode)*/
 
                 ),this.opMode
         );

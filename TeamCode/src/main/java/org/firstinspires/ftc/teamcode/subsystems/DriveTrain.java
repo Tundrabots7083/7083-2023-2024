@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 public class DriveTrain {
     private DcMotorEx leftFrontDrive   = null;  //  Used to control the left front drive wheel
@@ -19,29 +20,28 @@ private LinearOpMode opMode;
 
     private void initDriveTrain(){
         //back camera
+        /*
         leftFrontDrive  = opMode.hardwareMap.get(DcMotorEx.class, "rightRear");
         rightFrontDrive = opMode.hardwareMap.get(DcMotorEx.class, "leftRear");
         leftBackDrive  = opMode.hardwareMap.get(DcMotorEx.class, "rightFront");
         rightBackDrive = opMode.hardwareMap.get(DcMotorEx.class, "leftFront");
+        */
 
-
+//front camera
+        leftFrontDrive  = opMode.hardwareMap.get(DcMotorEx.class, "leftFront");
+        rightFrontDrive = opMode.hardwareMap.get(DcMotorEx.class, "rightFront");
+        leftBackDrive  = opMode.hardwareMap.get(DcMotorEx.class, "leftRear");
+        rightBackDrive = opMode.hardwareMap.get(DcMotorEx.class, "rightRear");
 
         leftFrontDrive.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         rightFrontDrive.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         leftBackDrive.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         rightBackDrive.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
-//front camera
-        /*
-        leftFrontDrive  = opMode.hardwareMap.get(DcMotorEx.class, "leftFront");
-        rightFrontDrive = opMode.hardwareMap.get(DcMotorEx.class, "rightFront");
-        leftBackDrive  = opMode.hardwareMap.get(DcMotorEx.class, "leftRear");
-        rightBackDrive = opMode.hardwareMap.get(DcMotorEx.class, "rightRear");
-        */
-        leftFrontDrive.setDirection(DcMotorEx.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotorEx.Direction.REVERSE);
-        rightFrontDrive.setDirection(DcMotorEx.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotorEx.Direction.FORWARD);
+        leftFrontDrive.setDirection(DcMotorEx.Direction.FORWARD);
+        leftBackDrive.setDirection(DcMotorEx.Direction.FORWARD);
+        rightFrontDrive.setDirection(DcMotorEx.Direction.REVERSE);
+        rightBackDrive.setDirection(DcMotorEx.Direction.REVERSE);
     }
     /**
      * Move robot according to desired axes motions
