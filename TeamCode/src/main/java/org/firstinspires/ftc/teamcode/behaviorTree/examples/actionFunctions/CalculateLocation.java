@@ -30,7 +30,7 @@ public class CalculateLocation implements ActionFunction {
         WorldModel worldModel =(WorldModel) globalStore.getValue("WorldModel");
         int desiredTagId =(int)globalStore.getValue("DesiredTagId");
 
-        WorldObject tagWorldObject =(WorldObject) worldModel.getValue(String.valueOf(desiredTagId));
+        WorldObject tagWorldObject = worldModel.getValue(String.valueOf(desiredTagId));
 
         Position fixedAprilTagLocalization =tagWorldObject.position;
         getCurrentDetections(globalStore);

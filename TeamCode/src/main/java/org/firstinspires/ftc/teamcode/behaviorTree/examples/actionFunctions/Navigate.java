@@ -31,7 +31,8 @@ public class Navigate implements ActionFunction {
         private double rangeErrorTolerance = 1;
         private double yawErrorTolerance = 1;
         private LinearOpMode opMode;
-        private RelativePosition currentTarget;
+        private RelativePosition currentRelativePositionTarget;
+        private RelativePosition currentAbsolutePositionTarget;
         private List<AprilTagDetection> currentDetections;
 
         private PIDController rangeController;
@@ -60,8 +61,8 @@ public class Navigate implements ActionFunction {
         public Status perform(GlobalStore globalStore) {
                 this.driveTrainConfig = (DriveTrainConfig) globalStore.getValue("DriveTrainConfig");
 
-                this.currentTarget = (RelativePosition) globalStore.getValue("CurrentTarget");
-                this.referenceTagId = currentTarget.referenceTagId;
+                this.currentRelativePositionTarget = (RelativePosition) globalStore.getValue("CurrentTarget");
+                this.referenceTagId = currentRelativePositionTarget.referenceTagId;
 
 
                 ErrorTolerances errorTolerances =(ErrorTolerances) globalStore.getValue("ErrorTolerances");
@@ -70,7 +71,7 @@ public class Navigate implements ActionFunction {
                 this.yawErrorTolerance = errorTolerances.yawErrorTolerance;
 
 
-                opMode.telemetry.addData("Navigation", "perform;******* currentTarget.referenceTagId = %d", currentTarget.referenceTagId);
+                opMode.telemetry.addData("Navigation", "perform;******* currentTarget.referenceTagId = %d", currentRelativePositionTarget.referenceTagId);
                 opMode.telemetry.update();
 
                 getCurrentDetections(globalStore);
@@ -131,18 +132,13 @@ public class Navigate implements ActionFunction {
                         return Status.FAILURE;
                 }
 
-                double rangeError = referenceTag.ftcPose.range - this.currentTarget.range;
-                double headingError = referenceTag.ftcPose.bearing - this.currentTarget.bearing;
-                double yawError = referenceTag.ftcPose.yaw - this.currentTarget.yaw;
+                double rangeError = referenceTag.ftcPose.range - this.currentRelativePositionTarget.range;
+                double headingError = referenceTag.ftcPose.bearing - this.currentRelativePositionTarget.bearing;
+                double yawError = referenceTag.ftcPose.yaw - this.currentRelativePositionTarget.yaw;
 
-                opMode.telemetry.addData("Navigate1", "SetPoint range: %f heading: %f yaw: %f\n", currentTarget.range, currentTarget.bearing, currentTarget.yaw);
+                opMode.telemetry.addData("Navigate1", "SetPoint range: %f heading: %f yaw: %f\n", currentRelativePositionTarget.range, currentRelativePositionTarget.bearing, currentRelativePositionTarget.yaw);
                 opMode.telemetry.addData("Navigate1", "navigateToRelativeLocation rangeError: %f headingError: %f yawError: %f\n", rangeError, headingError, yawError);
                 opMode.telemetry.update();
-
-
-
-
-
 
                 if (Math.abs(rangeError) <= this.rangeErrorTolerance &&
                         Math.abs(headingError) <= this.headingErrorTolerance &&
@@ -151,14 +147,14 @@ public class Navigate implements ActionFunction {
                         opMode.telemetry.update();
                         return Status.SUCCESS;
                 }
-                opMode.telemetry.addData("Navigate2", "Reference range: %f bearing: %f yaw: %f\n", currentTarget.range, currentTarget.bearing, currentTarget.yaw);
+                opMode.telemetry.addData("Navigate2", "Reference range: %f bearing: %f yaw: %f\n", currentRelativePositionTarget.range, currentRelativePositionTarget.bearing, currentRelativePositionTarget.yaw);
                 opMode.telemetry.update();
 
 
 
-                drive = Range.clip(this.rangeController.output(this.currentTarget.range, referenceTag.ftcPose.range), -this.driveTrainConfig.maxAutoSpeed, this.driveTrainConfig.maxAutoSpeed);
-                turn =   Range.clip(this.headingController.output(this.currentTarget.bearing, referenceTag.ftcPose.bearing), -this.driveTrainConfig.maxAutoTurn, this.driveTrainConfig.maxAutoTurn);
-                strafe = Range.clip(-this.yawController.output(this.currentTarget.yaw, referenceTag.ftcPose.yaw), -this.driveTrainConfig.maxAutoStrafe, this.driveTrainConfig.maxAutoStrafe);
+                drive = Range.clip(this.rangeController.output(this.currentRelativePositionTarget.range, referenceTag.ftcPose.range), -this.driveTrainConfig.maxAutoSpeed, this.driveTrainConfig.maxAutoSpeed);
+                turn =   Range.clip(this.headingController.output(this.currentRelativePositionTarget.bearing, referenceTag.ftcPose.bearing), -this.driveTrainConfig.maxAutoTurn, this.driveTrainConfig.maxAutoTurn);
+                strafe = Range.clip(-this.yawController.output(this.currentRelativePositionTarget.yaw, referenceTag.ftcPose.yaw), -this.driveTrainConfig.maxAutoStrafe, this.driveTrainConfig.maxAutoStrafe);
 
                 //        drive = -Range.clip(Math.max (rangeError * this.driveTrainConfig.speedGain, rangeError * 0.1), -this.driveTrainConfig.maxAutoSpeed, this.driveTrainConfig.maxAutoSpeed);
          //       turn = -Range.clip(Math.max (headingError * this.driveTrainConfig.turnGain, headingError * 0.1), -this.driveTrainConfig.maxAutoTurn, this.driveTrainConfig.maxAutoTurn);
@@ -172,5 +168,13 @@ public class Navigate implements ActionFunction {
                 //this.opMode.sleep(2000);
 
                 return Status.RUNNING;
+        }
+
+        private Status navigateToAbsoluteLocation(double x, double y, double heading){
+
+                //place holder to implement navigation by absolute coordinates
+                //use Roadrunner data types
+
+                return Status.SUCCESS;
         }
 }

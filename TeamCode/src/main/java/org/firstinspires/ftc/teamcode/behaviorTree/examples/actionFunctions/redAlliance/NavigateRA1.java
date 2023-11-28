@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.behaviorTree.examples.actionFunctions.redAlliance;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.behaviorTree.examples.actionFunctions.Navigate;
@@ -24,16 +26,7 @@ public class NavigateRA1 extends Navigate {
             return lastStatus;
         }
 
-       // RelativePosition currentTarget = new RelativePosition(8,23,0,0);
-  //      RelativePosition currentTarget = new RelativePosition(8,33.8,12,5);
-
-
-        RelativePosition currentTarget = new RelativePosition(7,30,0,0);
-        globalStore.setValue("CurrentTarget", currentTarget);
-
-        globalStore.setValue("ReferenceAprilTagId",7);
-        globalStore.setValue("YawStep",-0.25);
-
+        setRelativePositionTargetParameters(globalStore);
         setPIDCoeficients(globalStore);
         setErrorTolerances(globalStore);
 
@@ -44,7 +37,23 @@ public class NavigateRA1 extends Navigate {
         return status;
     }
 
-    private void setPIDCoeficients(GlobalStore globalStore){
+    private void setRelativePositionTargetParameters(GlobalStore globalStore){
+        RelativePosition currentTarget = new RelativePosition(7,30,0,0);
+        globalStore.setValue("CurrentTarget", currentTarget);
+
+        globalStore.setValue("ReferenceAprilTagId",7);
+        globalStore.setValue("YawStep",-0.25);
+    }
+    private void setAbsolutePositionTargetParameters(GlobalStore globalStore){
+        //this is a place holder method
+        /*
+        RelativePosition currentTarget = new RelativePosition(7,30,0,0);
+        globalStore.setValue("CurrentTarget", currentTarget);
+
+        globalStore.setValue("ReferenceAprilTagId",7);
+        */
+    }
+    private void setPIDCoeficients(@NonNull GlobalStore globalStore){
         PIDCoeficients pidCoeficients = new PIDCoeficients();
         pidCoeficients.HKd=0.0;
         pidCoeficients.HKi=0.022;
