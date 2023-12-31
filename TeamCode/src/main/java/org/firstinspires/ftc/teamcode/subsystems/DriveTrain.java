@@ -12,7 +12,7 @@ public class DriveTrain {
     private DcMotorEx rightBackDrive   = null;  //  Used to control the right back drive wheel
 
     private DcMotorEx specialMotor = null;
-private LinearOpMode opMode;
+    private LinearOpMode opMode;
     public DriveTrain(LinearOpMode opMode){
         this.opMode=opMode;
         initDriveTrain();

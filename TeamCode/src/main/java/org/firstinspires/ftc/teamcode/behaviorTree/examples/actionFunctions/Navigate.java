@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode.behaviorTree.examples.actionFunctions;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.control.PIDCoefficients;
+import com.acmerobotics.roadrunner.control.PIDFController;
+import com.acmerobotics.roadrunner.profile.MotionSegment;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.Range;
 
@@ -9,15 +13,25 @@ import org.firstinspires.ftc.teamcode.behaviorTree.general.ActionFunction;
 import org.firstinspires.ftc.teamcode.behaviorTree.general.Status;
 import org.firstinspires.ftc.teamcode.models.DriveTrainConfig;
 import org.firstinspires.ftc.teamcode.models.ErrorTolerances;
+import org.firstinspires.ftc.teamcode.models.NavigationType;
 import org.firstinspires.ftc.teamcode.models.PIDCoeficients;
 import org.firstinspires.ftc.teamcode.models.RelativePosition;
 import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.utils.PIDController;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+
+import com.acmerobotics.roadrunner.profile.MotionProfile;
+import com.acmerobotics.roadrunner.profile.MotionProfileBuilder;
+import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
+import com.acmerobotics.roadrunner.profile.MotionState;
+
+import java.util.ArrayList;
 import java.util.List;
 @Config
 public class Navigate implements ActionFunction {
+        private NavigationType navigationType = NavigationType.RELATIVE;
         private DriveTrain driveTrain;
 
         private AprilTagDetection referenceTag = null;
@@ -59,27 +73,44 @@ public class Navigate implements ActionFunction {
         }
 
         public Status perform(GlobalStore globalStore) {
+                Status status = Status.RUNNING;
                 this.driveTrainConfig = (DriveTrainConfig) globalStore.getValue("DriveTrainConfig");
 
+                this.navigationType = (NavigationType) globalStore.getValue("NavigationType");
+
+                if(this.navigationType == NavigationType.RELATIVE){
+                    status = navigateByAprilTags(globalStore);
+                }
+
+                if(this.navigationType == NavigationType.ABSOLUTE){
+                        status = navigateByTrajectory(globalStore);
+                }
+
+               return status;
+        }
+
+        private Status navigateByAprilTags(GlobalStore globalStore){
+                this.driveTrainConfig = (DriveTrainConfig) globalStore.getValue("DriveTrainConfig");
+
+                getCurrentRelativePositionTarget(globalStore);
+                getErrorTolerances(globalStore);
+                getCurrentDetections(globalStore);
+                setPIDControllers(globalStore);
+
+                return navigateToRelativeLocation();
+        }
+        private void getCurrentRelativePositionTarget(GlobalStore globalStore) {
                 this.currentRelativePositionTarget = (RelativePosition) globalStore.getValue("CurrentTarget");
                 this.referenceTagId = currentRelativePositionTarget.referenceTagId;
+        }
 
-
+        private void getErrorTolerances(GlobalStore globalStore){
                 ErrorTolerances errorTolerances =(ErrorTolerances) globalStore.getValue("ErrorTolerances");
                 this.headingErrorTolerance=errorTolerances.headingErrorTolerance;
                 this.rangeErrorTolerance = errorTolerances.rangeErrorTolerance;
                 this.yawErrorTolerance = errorTolerances.yawErrorTolerance;
-
-
-                opMode.telemetry.addData("Navigation", "perform;******* currentTarget.referenceTagId = %d", currentRelativePositionTarget.referenceTagId);
-                opMode.telemetry.update();
-
-                getCurrentDetections(globalStore);
-                setPIDControllers(globalStore);
-
-               return navigateToRelativeLocation();
-
         }
+
 
         private void getCurrentDetections(GlobalStore globalStore) {
                 this.currentDetections = (List<AprilTagDetection>) globalStore.getValue("CurrentDetections");
@@ -170,11 +201,66 @@ public class Navigate implements ActionFunction {
                 return Status.RUNNING;
         }
 
-        private Status navigateToAbsoluteLocation(double x, double y, double heading){
+        private Status navigateByTrajectory(GlobalStore globalStore){
+                Trajectory currentTrajectory = (Trajectory) globalStore.getValue("CurrentTrajectory");
+                //pass trajectory to the mech drive set up with StandardLocalizer
+
+                return Status.SUCCESS;
+        }
+        private Status followTrajectories(double x, double y, double heading){
 
                 //place holder to implement navigation by absolute coordinates
                 //use Roadrunner data types
 
                 return Status.SUCCESS;
+        }
+
+        private void setMotionProfile(){
+        /*        double maxVelocity = 25;
+                double maxAcceleration = 40;
+                double maxDeceleration = 40;
+                double maxJerk = 100;
+
+                MotionProfile profile = MotionProfileGenerator.generateSimpleMotionProfile(
+                        new MotionState(0, 0, 0),
+                        new MotionState(60, 0, 0),
+                        maxVelocity,
+                        maxAcceleration,
+                        maxJerk
+                );
+
+                // specify coefficients/gains
+                PIDCoefficients coeffs = new PIDCoefficients(kP, kI, kD);
+// create the controller
+                PIDFController controller = new PIDFController(coeffs);
+
+                // specify the setpoint
+                controller.setTargetPosition(setpoint);
+
+// in each iteration of the control loop
+// measure the position or output variable
+// apply the correction to the input variable
+                double correction = controller.update(measuredPosition);
+
+                // Define the initial and final poses
+                Pose2d startPose = new Pose2d(0, 0, 0);
+                Pose2d endPose = new Pose2d(24, 0, 0);
+
+                MotionState startState = new MotionState(startPose.getX(),0,0,0);
+
+                List<MotionSegment> segments = new ArrayList<MotionSegment>();
+                segments.add(new MotionSegment(startState,0));
+                segments.add(new MotionSegment(new MotionState(10,5,0,0),5));
+                segments.add(new MotionSegment(new MotionState(10,5,0,0),5));
+                segments.add(new MotionSegment(new MotionState(10,5,0,0),5));
+
+                MotionProfile profile1= new MotionProfile().
+
+                // Generate a motion profile based on the start and end poses
+                MotionProfile profile = new MotionProfileBuilder(startState).
+                        .addSegment(startPose, new MotionState(0, 0, 0, 0))
+                        .addSegment(endPose, new MotionState(0, 0, 0, 0))
+                        .build();
+*/
         }
 }

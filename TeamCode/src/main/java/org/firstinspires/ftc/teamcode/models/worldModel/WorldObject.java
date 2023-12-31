@@ -1,15 +1,17 @@
 package org.firstinspires.ftc.teamcode.models.worldModel;
 
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+
 import org.firstinspires.ftc.teamcode.models.Position;
 
 public class WorldObject {
     public String name;
     public String key;
-    public Position position;
+    public Pose2d position;
     public WorldObjectSize size;
 
-    public WorldObject(String name, String key, Position position, WorldObjectSize size) {
+    public WorldObject(String name, String key, Pose2d position, WorldObjectSize size) {
         this.name = name;
         this.key = key;
         this.position = position;

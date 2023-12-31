@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.behaviorTree.examples.behaviorTrees;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.behaviorTree.examples.actionFunctions.LocalizeByAprilTag;
 import org.firstinspires.ftc.teamcode.behaviorTree.examples.actionFunctions.SearchTarget;
 import org.firstinspires.ftc.teamcode.behaviorTree.examples.actionFunctions.redAlliance.NavigateRA1;
 import org.firstinspires.ftc.teamcode.behaviorTree.examples.actionFunctions.redAlliance.NavigateRA2;
@@ -50,18 +51,19 @@ public class RedAudienceAutonomous {
                 Arrays.asList(
                         new Selector(
                                 Arrays.asList(
-                                        new Action(new DetectAprilTags(this.opMode),this.opMode),
-                                        new Action(new SearchTarget(this.opMode),this.opMode)
+                                        new Action(new DetectAprilTags(this.opMode),this.opMode)//,
+                                       // new Action(new SearchTarget(this.opMode),this.opMode)
                                 )
                         ,this.opMode),
-                        new Action(new NavigateRA1(this.opMode),this.opMode),
+                       // new Action(new NavigateRA1(this.opMode),this.opMode),
+                        new Action(new LocalizeByAprilTag(this.opMode),this.opMode)//,
                         //new Action(new ScoreSpikePixel(this.opMode),this.opMode),
-                        new Action(new NavigateRA2(this.opMode),this.opMode),
-                      //  new Action(new NavigateRA3(this.opMode),this.opMode),/**/
+                     /*   new Action(new NavigateRA2(this.opMode),this.opMode),
+                      //  new Action(new NavigateRA3(this.opMode),this.opMode),
                         new Action(new NavigateRA4(this.opMode),this.opMode),
                         new Action(new NavigateRA5(this.opMode),this.opMode),
                      //   new Action(new ScoreBoardPixel(this.opMode),this.opMode),
-                        new Action(new NavigateRA6(this.opMode),this.opMode)/**/
+                        new Action(new NavigateRA6(this.opMode),this.opMode)*/
 
                 ),this.opMode
         );

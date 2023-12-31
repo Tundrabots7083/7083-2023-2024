@@ -1,9 +1,10 @@
 package org.firstinspires.ftc.teamcode.behaviorTree.examples.worldModels;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+
 import org.firstinspires.ftc.teamcode.models.worldModel.WorldModel;
 import org.firstinspires.ftc.teamcode.models.worldModel.WorldObject;
 import org.firstinspires.ftc.teamcode.models.worldModel.WorldObjectSize;
-import org.firstinspires.ftc.teamcode.models.Position;
 public class CenterStageWorldModel extends WorldModel {
     public CenterStageWorldModel() {
         this.Init();
@@ -11,23 +12,23 @@ public class CenterStageWorldModel extends WorldModel {
 
     private void Init() {
         //blue alliance backdrop board
-        WorldObject blueAllianceBackdrop = new WorldObject("BlueAllianceBackdrop","BlueBackdrop", new Position(60.75, 49.5), new WorldObjectSize(48, 35.0));
+        WorldObject blueAllianceBackdrop = new WorldObject("BlueAllianceBackdrop","BlueBackdrop", new Pose2d(60.75, 49.5), new WorldObjectSize(48, 35.0));
 
         this.setValue(blueAllianceBackdrop);
 
         //blue alliance backdrop board tags
-        WorldObject blueAllianceLeft = new WorldObject("BlueAllianceLeft","1", new Position(1.0, 3.0), new WorldObjectSize(10.5, 5.50));
-        WorldObject blueAllianceCenter = new WorldObject("BlueAllianceCenter","2", new Position(2.0, 6.0), new WorldObjectSize(20.5, 10.50));
-        WorldObject blueAllianceRight = new WorldObject("BlueAllianceRight","3", new Position(3.0, 9.0), new WorldObjectSize(30.5, 15.50));
+        WorldObject blueAllianceLeft = new WorldObject("BlueAllianceLeft","1", new Pose2d(62, 42, 180), new WorldObjectSize(10.5, 5.50));
+        WorldObject blueAllianceCenter = new WorldObject("BlueAllianceCenter","2", new Pose2d(62, 36, 180), new WorldObjectSize(20.5, 10.50));
+        WorldObject blueAllianceRight = new WorldObject("BlueAllianceRight","3", new Pose2d(62, 30, 180), new WorldObjectSize(30.5, 15.50));
 
         this.setValue(blueAllianceLeft);
         this.setValue(blueAllianceCenter);
         this.setValue(blueAllianceRight);
 
         //red alliance backdrop board tags
-        WorldObject redAllianceLeft = new WorldObject("RedAllianceLeft","4", new Position(1.0, 3.0), new WorldObjectSize(10.5, 5.50));
-        WorldObject redAllianceCenter = new WorldObject("RedAllianceCenter","5", new Position(2.0, 6.0), new WorldObjectSize(20.5, 10.50));
-        WorldObject redAllianceRight = new WorldObject("RedAllianceRight","6", new Position(3.0, 9.0), new WorldObjectSize(30.5, 15.50));
+        WorldObject redAllianceLeft = new WorldObject("RedAllianceLeft","4", new Pose2d(62, -30.0,180), new WorldObjectSize(10.5, 5.50));
+        WorldObject redAllianceCenter = new WorldObject("RedAllianceCenter","5", new Pose2d(62, -36.0, 180), new WorldObjectSize(20.5, 10.50));
+        WorldObject redAllianceRight = new WorldObject("RedAllianceRight","6", new Pose2d(62, -42.0, 180), new WorldObjectSize(30.5, 15.50));
 
         this.setValue(redAllianceLeft);
         this.setValue(redAllianceCenter);
@@ -35,29 +36,29 @@ public class CenterStageWorldModel extends WorldModel {
 
 
         //blue alliance backdrop board
-        WorldObject redAllianceBackdrop = new WorldObject("RedAllianceBackdrop","RedBackdrop", new Position(60.75, -12.75), new WorldObjectSize(48, 35.0));
+        WorldObject redAllianceBackdrop = new WorldObject("RedAllianceBackdrop","RedBackdrop", new Pose2d(60.75, -12.75), new WorldObjectSize(48, 35.0));
 
         this.setValue(redAllianceBackdrop);
 
         //red alliance wall target tags
-        WorldObject redAllianceWallTargetLarge = new WorldObject("RedAllianceWallTargetLarge","7", new Position(-72.0, -29.5), new WorldObjectSize(5.0, 5.0));
-        WorldObject redAllianceWallTargetSmall = new WorldObject("RedAllianceWallTargetSmall","8", new Position(-72.0, -24.0), new WorldObjectSize(2.0, 2.0));
+        WorldObject redAllianceWallTargetLarge = new WorldObject("RedAllianceWallTargetLarge","7", new Pose2d(-72.0, -41.5, 0), new WorldObjectSize(5.0, 5.0));
+        WorldObject redAllianceWallTargetSmall = new WorldObject("RedAllianceWallTargetSmall","8", new Pose2d(-72.0, -36.0, 0), new WorldObjectSize(2.0, 2.0));
 
         this.setValue(redAllianceWallTargetLarge);
         this.setValue(redAllianceWallTargetSmall);
 
         //blue alliance wall target tags
-        WorldObject blueAllianceWallTargetLarge = new WorldObject("BlueAllianceWallTargetLarge","10", new Position(-72.0, 29.5), new WorldObjectSize(5.0, 5.0));
-        WorldObject blueAllianceWallTargetSmall = new WorldObject("BlueAllianceWallTargetSmall","9", new Position(-72.0, 24.0), new WorldObjectSize(2.0, 2.0));
+        WorldObject blueAllianceWallTargetLarge = new WorldObject("BlueAllianceWallTargetLarge","10", new Pose2d(-72.0, 41.5, 0), new WorldObjectSize(5.0, 5.0));
+        WorldObject blueAllianceWallTargetSmall = new WorldObject("BlueAllianceWallTargetSmall","9", new Pose2d(-72.0, 36, 0), new WorldObjectSize(2.0, 2.0));
 
         this.setValue(blueAllianceWallTargetLarge);
         this.setValue(blueAllianceWallTargetSmall);
 
 
         //blue alliance audience spike positions
-        WorldObject blueAllianceAudienceSpikeLeft = new WorldObject("BlueAllianceAudienceSpikeLeft","BlueAllianceAudienceSpikeLeft", new Position(-24, 30.0), new WorldObjectSize(10.5, 5.50));
-        WorldObject blueAllianceAudienceSpikeCenter = new WorldObject("BlueAllianceAudienceSpikeCenter","BlueAllianceAudienceSpikeCenter", new Position(-36, 24), new WorldObjectSize(20.5, 10.50));
-        WorldObject blueAllianceAudienceSpikeRight = new WorldObject("BlueAllianceAudienceSpikeRight","BlueAllianceAudienceSpikeRight", new Position(-48, 30), new WorldObjectSize(30.5, 15.50));
+        WorldObject blueAllianceAudienceSpikeLeft = new WorldObject("BlueAllianceAudienceSpikeLeft","BlueAllianceAudienceSpikeLeft", new Pose2d(-24, 30.0), new WorldObjectSize(10.5, 5.50));
+        WorldObject blueAllianceAudienceSpikeCenter = new WorldObject("BlueAllianceAudienceSpikeCenter","BlueAllianceAudienceSpikeCenter", new Pose2d(-36, 24), new WorldObjectSize(20.5, 10.50));
+        WorldObject blueAllianceAudienceSpikeRight = new WorldObject("BlueAllianceAudienceSpikeRight","BlueAllianceAudienceSpikeRight", new Pose2d(-48, 30), new WorldObjectSize(30.5, 15.50));
 
         this.setValue(blueAllianceAudienceSpikeLeft);
         this.setValue(blueAllianceAudienceSpikeCenter);
@@ -65,9 +66,9 @@ public class CenterStageWorldModel extends WorldModel {
 
 
         //blue alliance backstage spike positions
-        WorldObject blueAllianceBackstageSpikeLeft = new WorldObject("BlueAllianceBackstageSpikeLeft","BlueAllianceBackstageSpikeLeft", new Position(24, 30.0), new WorldObjectSize(10.5, 5.50));
-        WorldObject blueAllianceBackstageSpikeCenter = new WorldObject("BlueAllianceBackstageSpikeCenter","BlueAllianceBackstageSpikeCenter", new Position(12, 24), new WorldObjectSize(20.5, 10.50));
-        WorldObject blueAllianceBackstageSpikeRight = new WorldObject("BlueAllianceBackstageSpikeRight","BlueAllianceBackstageSpikeRight", new Position(0, 30), new WorldObjectSize(30.5, 15.50));
+        WorldObject blueAllianceBackstageSpikeLeft = new WorldObject("BlueAllianceBackstageSpikeLeft","BlueAllianceBackstageSpikeLeft", new Pose2d(24, 30.0), new WorldObjectSize(10.5, 5.50));
+        WorldObject blueAllianceBackstageSpikeCenter = new WorldObject("BlueAllianceBackstageSpikeCenter","BlueAllianceBackstageSpikeCenter", new Pose2d(12, 24), new WorldObjectSize(20.5, 10.50));
+        WorldObject blueAllianceBackstageSpikeRight = new WorldObject("BlueAllianceBackstageSpikeRight","BlueAllianceBackstageSpikeRight", new Pose2d(0, 30), new WorldObjectSize(30.5, 15.50));
 
         this.setValue(blueAllianceBackstageSpikeLeft);
         this.setValue(blueAllianceBackstageSpikeCenter);
@@ -75,9 +76,9 @@ public class CenterStageWorldModel extends WorldModel {
 
 
         //red alliance audience spike positions
-        WorldObject redAllianceAudienceSpikeLeft = new WorldObject("RedAllianceAudienceSpikeLeft","RedAllianceAudienceSpikeLeft", new Position(-48.0, -30.0), new WorldObjectSize(10.5, 5.50));
-        WorldObject redAllianceAudienceSpikeCenter = new WorldObject("RedAllianceAudienceSpikeCenter","RedAllianceAudienceSpikeCenter", new Position(-36, -24), new WorldObjectSize(20.5, 10.50));
-        WorldObject redAllianceAudienceSpikeRight = new WorldObject("RedAllianceAudienceSpikeRight","RedAllianceAudienceSpikeRight", new Position(-24, -30), new WorldObjectSize(30.5, 15.50));
+        WorldObject redAllianceAudienceSpikeLeft = new WorldObject("RedAllianceAudienceSpikeLeft","RedAllianceAudienceSpikeLeft", new Pose2d(-48.0, -30.0), new WorldObjectSize(10.5, 5.50));
+        WorldObject redAllianceAudienceSpikeCenter = new WorldObject("RedAllianceAudienceSpikeCenter","RedAllianceAudienceSpikeCenter", new Pose2d(-36, -24), new WorldObjectSize(20.5, 10.50));
+        WorldObject redAllianceAudienceSpikeRight = new WorldObject("RedAllianceAudienceSpikeRight","RedAllianceAudienceSpikeRight", new Pose2d(-24, -30), new WorldObjectSize(30.5, 15.50));
 
         this.setValue(redAllianceAudienceSpikeLeft);
         this.setValue(redAllianceAudienceSpikeCenter);
@@ -85,9 +86,9 @@ public class CenterStageWorldModel extends WorldModel {
 
 
         //red alliance backstage spike positions
-        WorldObject redAllianceBackstageSpikeLeft = new WorldObject("RedAllianceBackstageSpikeLeft","RedAllianceBackstageSpikeLeft", new Position(0, -30), new WorldObjectSize(10.5, 5.50));
-        WorldObject redAllianceBackstageSpikeCenter = new WorldObject("RedAllianceBackstageSpikeCenter","RedAllianceBackstageSpikeCenter", new Position(12.0, -24), new WorldObjectSize(20.5, 10.50));
-        WorldObject redAllianceBackstageSpikeRight = new WorldObject("RedAllianceBackstageSpikeRight","RedAllianceBackstageSpikeRight", new Position(24.0, -30), new WorldObjectSize(30.5, 15.50));
+        WorldObject redAllianceBackstageSpikeLeft = new WorldObject("RedAllianceBackstageSpikeLeft","RedAllianceBackstageSpikeLeft", new Pose2d(0, -30), new WorldObjectSize(10.5, 5.50));
+        WorldObject redAllianceBackstageSpikeCenter = new WorldObject("RedAllianceBackstageSpikeCenter","RedAllianceBackstageSpikeCenter", new Pose2d(12.0, -24), new WorldObjectSize(20.5, 10.50));
+        WorldObject redAllianceBackstageSpikeRight = new WorldObject("RedAllianceBackstageSpikeRight","RedAllianceBackstageSpikeRight", new Pose2d(24.0, -30), new WorldObjectSize(30.5, 15.50));
 
         this.setValue(redAllianceBackstageSpikeLeft);
         this.setValue(redAllianceBackstageSpikeCenter);

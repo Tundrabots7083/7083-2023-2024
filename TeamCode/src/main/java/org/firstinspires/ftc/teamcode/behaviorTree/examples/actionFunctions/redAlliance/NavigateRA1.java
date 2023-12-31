@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.behaviorTree.examples.actionFunctions.Navi
 import org.firstinspires.ftc.teamcode.behaviorTree.general.GlobalStore;
 import org.firstinspires.ftc.teamcode.behaviorTree.general.Status;
 import org.firstinspires.ftc.teamcode.models.ErrorTolerances;
+import org.firstinspires.ftc.teamcode.models.NavigationType;
 import org.firstinspires.ftc.teamcode.models.PIDCoeficients;
 import org.firstinspires.ftc.teamcode.models.RelativePosition;
 
@@ -29,6 +30,7 @@ public class NavigateRA1 extends Navigate {
         setRelativePositionTargetParameters(globalStore);
         setPIDCoeficients(globalStore);
         setErrorTolerances(globalStore);
+        setNavigationType(globalStore);
 
         Status status = super.perform(globalStore);
 
@@ -44,14 +46,9 @@ public class NavigateRA1 extends Navigate {
         globalStore.setValue("ReferenceAprilTagId",7);
         globalStore.setValue("YawStep",-0.25);
     }
-    private void setAbsolutePositionTargetParameters(GlobalStore globalStore){
-        //this is a place holder method
-        /*
-        RelativePosition currentTarget = new RelativePosition(7,30,0,0);
-        globalStore.setValue("CurrentTarget", currentTarget);
+    private void setNavigationType(GlobalStore globalStore){
 
-        globalStore.setValue("ReferenceAprilTagId",7);
-        */
+        globalStore.setValue("NavigationType", NavigationType.RELATIVE);
     }
     private void setPIDCoeficients(@NonNull GlobalStore globalStore){
         PIDCoeficients pidCoeficients = new PIDCoeficients();

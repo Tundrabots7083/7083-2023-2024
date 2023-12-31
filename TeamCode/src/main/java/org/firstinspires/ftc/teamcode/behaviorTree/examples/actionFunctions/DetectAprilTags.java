@@ -40,9 +40,10 @@ public class DetectAprilTags implements ActionFunction {
              AprilTagDetection  referenceTag =currentDetections !=null ? currentDetections.stream()
                      .filter(detection -> detection.metadata != null && detection.id == referenceTagId).findFirst( ).orElse(null)
                      : null;
+             /*
              if(referenceTag == null){
                  return Status.FAILURE;
-             }
+             }*/
              globalStore.setValue("CurrentDetections", currentDetections);
              this.logDetectionsDetails(currentDetections);
              return Status.SUCCESS;
@@ -57,9 +58,9 @@ public class DetectAprilTags implements ActionFunction {
     private void logDetectionsDetails(List<AprilTagDetection> currentDetections ){
         currentDetections.forEach(detection -> {
             if(detection == null
-                    && detection.metadata !=null
-                    && detection.metadata.name !=null
-                    && detection.ftcPose!=null){
+                    || detection.metadata ==null
+                    || detection.metadata.name ==null
+                    || detection.ftcPose ==null){
                 return;
             }
 //            opMode.telemetry.addData("Target", "ID %d (%s)", detection.id, detection.metadata.name);

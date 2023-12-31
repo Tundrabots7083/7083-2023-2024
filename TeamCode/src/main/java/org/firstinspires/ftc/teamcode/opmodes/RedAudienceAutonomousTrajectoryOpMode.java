@@ -1,17 +1,16 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.behaviorTree.examples.behaviorTrees.RedAudienceAutonomous;
+import org.firstinspires.ftc.teamcode.behaviorTree.examples.behaviorTrees.RedAudienceAutonomousWithDeadWheels;
 import org.firstinspires.ftc.teamcode.behaviorTree.general.Status;
 
-@Autonomous(name="BT Drive To AprilTag", group="vision")
-public class RedAudienceAutonomousOpMode extends LinearOpMode
+@Autonomous(name="BT Drive Trajectory", group="vision")
+public class RedAudienceAutonomousTrajectoryOpMode  extends LinearOpMode
 {
-    RedAudienceAutonomous behaviorTree = null;
+    RedAudienceAutonomousWithDeadWheels behaviorTree = null;
 
     @Override
     public void runOpMode()
@@ -19,22 +18,22 @@ public class RedAudienceAutonomousOpMode extends LinearOpMode
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = dashboard.getTelemetry();
 
-        telemetry.addData("BTAutoDriveToAprilTagOpMode", "runOpMode started");
+        telemetry.addData("RedAudienceAutonomousTrajectoryOpMode", "runOpMode started");
         telemetry.update();
         initialize(this);
         waitForStart();
 
         while (opModeIsActive())
         {
-            telemetry.addData("BTAutoDriveToAprilTagOpMode", "runOpMode while started");
+            telemetry.addData("RedAudienceAutonomousTrajectoryOpMode", "runOpMode while started");
             telemetry.update();
             Status result = this.behaviorTree.run();
 
-            telemetry.addData("RedAudienceAutonomous", "Behavior tree result: %s",result);
+            telemetry.addData("RedAudienceAutonomousWithDeadWheels", "Behavior tree result: %s",result);
             telemetry.update();
 
             if(result == Status.SUCCESS){
-                telemetry.addData("BTAutoDriveToAprilTagOpMode", "runOpMode success");
+                telemetry.addData("RedAudienceAutonomousTrajectoryOpMode", "runOpMode success");
                 telemetry.update();
                 requestOpModeStop();
             }
@@ -43,7 +42,7 @@ public class RedAudienceAutonomousOpMode extends LinearOpMode
 
     private void initialize(LinearOpMode opMode){
 
-        this.behaviorTree = new RedAudienceAutonomous(opMode);
+        this.behaviorTree = new RedAudienceAutonomousWithDeadWheels(opMode);
     }
 
 }
