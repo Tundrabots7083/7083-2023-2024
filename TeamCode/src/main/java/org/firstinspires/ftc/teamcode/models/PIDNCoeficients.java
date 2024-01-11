@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.models;
 
-public class PIDCoeficients {
+public class PIDNCoeficients {
     public double RKp=0.033;
     public double RKi=0.12;
     public double RKd=0.0;

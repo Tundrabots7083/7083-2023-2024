@@ -3,9 +3,14 @@ package org.firstinspires.ftc.teamcode.behaviorTree.examples.actionFunctions;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.control.PIDFController;
-import com.acmerobotics.roadrunner.profile.MotionSegment;
+import com.acmerobotics.roadrunner.profile.MotionProfile;
+import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
+import com.acmerobotics.roadrunner.profile.MotionState;
+
+
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.behaviorTree.general.GlobalStore;
@@ -14,20 +19,15 @@ import org.firstinspires.ftc.teamcode.behaviorTree.general.Status;
 import org.firstinspires.ftc.teamcode.models.DriveTrainConfig;
 import org.firstinspires.ftc.teamcode.models.ErrorTolerances;
 import org.firstinspires.ftc.teamcode.models.NavigationType;
-import org.firstinspires.ftc.teamcode.models.PIDCoeficients;
+import org.firstinspires.ftc.teamcode.models.PIDNCoeficients;
 import org.firstinspires.ftc.teamcode.models.RelativePosition;
 import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.utils.PIDController;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.util.NanoClock;
 
-import com.acmerobotics.roadrunner.profile.MotionProfile;
-import com.acmerobotics.roadrunner.profile.MotionProfileBuilder;
-import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
-import com.acmerobotics.roadrunner.profile.MotionState;
-
-import java.util.ArrayList;
 import java.util.List;
 @Config
 public class Navigate implements ActionFunction {
@@ -35,6 +35,7 @@ public class Navigate implements ActionFunction {
         private DriveTrain driveTrain;
 
         private AprilTagDetection referenceTag = null;
+        private AprilTagPoseFtc initialPose = null;
         private double drive = 0; // Desired forward power/speed (-1 to +1)
         private double strafe = 0; // Desired strafe power/speed (-1 to +1)
         private double turn = 0; // Desired turning power/speed (-1 to +1)
@@ -50,10 +51,20 @@ public class Navigate implements ActionFunction {
         private List<AprilTagDetection> currentDetections;
 
         private PIDController rangeController;
+        private PIDFController rangeFController;
+        private PIDCoefficients pidCoefficients;
         private PIDController headingController;
-        private PIDController yawController;
-        private PIDCoeficients pidCoeficients;
+        private PIDFController headingFController;
 
+        private PIDController yawController;
+        private PIDFController yawFController;
+
+        private PIDNCoeficients pidNCoeficients;
+
+
+        private MotionProfile rangeMotionProfile;
+        private MotionProfile headingMotionProfile;
+        private MotionProfile yawMotionProfile;
         public static double RKp=0.033;
         public static double RKi=0.185;
         public static double RKd=0.005;//0.0135 use if tune
@@ -66,10 +77,18 @@ public class Navigate implements ActionFunction {
         public static double YKi=0.09;
         public static double YKd =0.0001;
 
-
+        ElapsedTime timer;
+        private NanoClock clock;
+        double lastTime=0;
+        double currentStartTime;
         public Navigate(LinearOpMode opMode) {
                 this.opMode = opMode;
                 this.driveTrain = new DriveTrain(opMode);
+
+                long MILLIS_IN_NANO = 1000000;
+                timer = new ElapsedTime(MILLIS_IN_NANO);
+                clock = NanoClock.system();
+                currentStartTime = clock.seconds();
         }
 
         public Status perform(GlobalStore globalStore) {
@@ -95,7 +114,12 @@ public class Navigate implements ActionFunction {
                 getCurrentRelativePositionTarget(globalStore);
                 getErrorTolerances(globalStore);
                 getCurrentDetections(globalStore);
+
+                if (this.referenceTag == null || this.referenceTag.ftcPose == null) {
+                        return Status.FAILURE;
+                }
                 setPIDControllers(globalStore);
+                setMotionProfiles();
 
                 return navigateToRelativeLocation();
         }
@@ -118,6 +142,9 @@ public class Navigate implements ActionFunction {
                 this.referenceTag = currentDetections.stream().filter(detection -> detection.metadata != null && detection.id == this.referenceTagId).findFirst().orElse(null);
 
                 if (referenceTag != null) {
+                        if(initialPose == null){
+                                initialPose=referenceTag.ftcPose;
+                        }
                         opMode.telemetry.addData("Navigate", "Tag ID %d metadata.id %d name is %s\n", referenceTag.id, referenceTag.metadata.id, referenceTag.metadata.name);
                 } else {
                         opMode.telemetry.addData("Unknown Target", "Tag ID %d is not in TagLibrary\n", -1);
@@ -127,12 +154,27 @@ public class Navigate implements ActionFunction {
         }
 
         private void setPIDControllers(GlobalStore globalStore){
-                this.pidCoeficients = (PIDCoeficients) globalStore.getValue("PIDCoeficients");
-/*
-                this.rangeController = new PIDController(this.pidCoeficients.RKp, this.pidCoeficients.RKi, this.pidCoeficients.RKd,this.opMode, "R");
-                this.headingController = new PIDController(this.pidCoeficients.HKp,this.pidCoeficients.HKi,this.pidCoeficients.HKd,this.opMode, "H");
-                this.yawController = new PIDController(this.pidCoeficients.YKp,this.pidCoeficients.YKi,this.pidCoeficients.YKd,this.opMode, "Y");
-                */
+                this.pidNCoeficients = (PIDNCoeficients) globalStore.getValue("PIDCoeficients");
+
+                this.rangeController = new PIDController(this.pidNCoeficients.RKp, this.pidNCoeficients.RKi, this.pidNCoeficients.RKd,this.opMode, "R");
+
+
+                //Set RoadRunner controller
+                PIDCoefficients rangePIDCoeficients = new PIDCoefficients(this.pidNCoeficients.RKp,this.pidNCoeficients.RKi, this.pidNCoeficients.RKd);
+                this.rangeFController = new PIDFController(rangePIDCoeficients);
+
+
+
+                this.headingController = new PIDController(this.pidNCoeficients.HKp,this.pidNCoeficients.HKi,this.pidNCoeficients.HKd,this.opMode, "H");
+                //Set RoadRunner controller
+                PIDCoefficients headingPIDCoeficients = new PIDCoefficients(this.pidNCoeficients.HKp,this.pidNCoeficients.HKi,this.pidNCoeficients.HKd);
+                this.headingFController = new PIDFController(headingPIDCoeficients);
+
+                this.yawController = new PIDController(this.pidNCoeficients.YKp,this.pidNCoeficients.YKi,this.pidNCoeficients.YKd,this.opMode, "Y");
+                //Set RoadRunner controller
+                PIDCoefficients yawPIDCoeficients = new PIDCoefficients(this.pidNCoeficients.YKp,this.pidNCoeficients.YKi,this.pidNCoeficients.YKd);
+                this.yawFController = new PIDFController(yawPIDCoeficients);
+
                /* if(this.rangeController == null) {
                         this.rangeController = new PIDController(this.pidCoeficients.RKp, this.pidCoeficients.RKi, this.pidCoeficients.RKd, this.opMode, "R");
                 }
@@ -143,7 +185,7 @@ public class Navigate implements ActionFunction {
                 if(this.yawController == null) {
                         this.yawController = new PIDController(this.pidCoeficients.YKp, this.pidCoeficients.YKi, this.pidCoeficients.YKd, this.opMode, "Y");
                 }
-                */
+
 
                 if(this.rangeController == null) {
                         this.rangeController = new PIDController(this.RKp, this.RKi, this.RKd, this.opMode, "R");
@@ -154,7 +196,7 @@ public class Navigate implements ActionFunction {
 
                 if(this.yawController == null) {
                         this.yawController = new PIDController(this.YKp, this.YKi, this.YKd, this.opMode, "Y");
-                }
+                }*/
 
         }
 
@@ -166,11 +208,11 @@ public class Navigate implements ActionFunction {
                 double rangeError = referenceTag.ftcPose.range - this.currentRelativePositionTarget.range;
                 double headingError = referenceTag.ftcPose.bearing - this.currentRelativePositionTarget.bearing;
                 double yawError = referenceTag.ftcPose.yaw - this.currentRelativePositionTarget.yaw;
-
+/*
                 opMode.telemetry.addData("Navigate1", "SetPoint range: %f heading: %f yaw: %f\n", currentRelativePositionTarget.range, currentRelativePositionTarget.bearing, currentRelativePositionTarget.yaw);
                 opMode.telemetry.addData("Navigate1", "navigateToRelativeLocation rangeError: %f headingError: %f yawError: %f\n", rangeError, headingError, yawError);
                 opMode.telemetry.update();
-
+*/
                 if (Math.abs(rangeError) <= this.rangeErrorTolerance &&
                         Math.abs(headingError) <= this.headingErrorTolerance &&
                         Math.abs(yawError) <= this.yawErrorTolerance) {
@@ -178,25 +220,67 @@ public class Navigate implements ActionFunction {
                         opMode.telemetry.update();
                         return Status.SUCCESS;
                 }
+                /*
                 opMode.telemetry.addData("Navigate2", "Reference range: %f bearing: %f yaw: %f\n", currentRelativePositionTarget.range, currentRelativePositionTarget.bearing, currentRelativePositionTarget.yaw);
                 opMode.telemetry.update();
-
-
+*/
+                // specify the setpoint
+                this.rangeFController.setTargetPosition(referenceTag.ftcPose.range);
 
                 drive = Range.clip(this.rangeController.output(this.currentRelativePositionTarget.range, referenceTag.ftcPose.range), -this.driveTrainConfig.maxAutoSpeed, this.driveTrainConfig.maxAutoSpeed);
+                double correctionN = this.rangeController.output(this.currentRelativePositionTarget.range, referenceTag.ftcPose.range);
+                double correctionF = this.rangeFController.update(this.currentRelativePositionTarget.range);
+
+                double now = clock.seconds();
+
+                double deltaTime = now - currentStartTime;
+
+                //currentStartTime = now;
+               // MotionState state = this.motionProfile.get(elapsedTime);
+
+                MotionState rangeState = this.rangeMotionProfile.get(deltaTime);
+
+                this.rangeFController.setTargetPosition(rangeState.getX());
+                this.rangeFController.setTargetVelocity(rangeState.getV());
+                this.rangeFController.setTargetAcceleration(rangeState.getA());
+
+               double driveF = -Range.clip(this.rangeFController.update(this.currentRelativePositionTarget.range), -this.driveTrainConfig.maxAutoSpeed, this.driveTrainConfig.maxAutoSpeed);
+
+
                 turn =   Range.clip(this.headingController.output(this.currentRelativePositionTarget.bearing, referenceTag.ftcPose.bearing), -this.driveTrainConfig.maxAutoTurn, this.driveTrainConfig.maxAutoTurn);
+
+                MotionState headingState = this.headingMotionProfile.get(deltaTime);
+
+                this.headingFController.setTargetPosition(headingState.getX());
+                this.headingFController.setTargetVelocity(headingState.getV());
+                this.headingFController.setTargetAcceleration(headingState.getA());
+
+                double turnF =   Range.clip(this.headingFController.update(this.currentRelativePositionTarget.bearing, referenceTag.ftcPose.bearing), -this.driveTrainConfig.maxAutoTurn, this.driveTrainConfig.maxAutoTurn);
+
+
+
                 strafe = Range.clip(-this.yawController.output(this.currentRelativePositionTarget.yaw, referenceTag.ftcPose.yaw), -this.driveTrainConfig.maxAutoStrafe, this.driveTrainConfig.maxAutoStrafe);
 
-                //        drive = -Range.clip(Math.max (rangeError * this.driveTrainConfig.speedGain, rangeError * 0.1), -this.driveTrainConfig.maxAutoSpeed, this.driveTrainConfig.maxAutoSpeed);
-         //       turn = -Range.clip(Math.max (headingError * this.driveTrainConfig.turnGain, headingError * 0.1), -this.driveTrainConfig.maxAutoTurn, this.driveTrainConfig.maxAutoTurn);
-         //       strafe = -Range.clip(Math.max (-yawError * this.driveTrainConfig.strafeGain, -yawError * 0.1), -this.driveTrainConfig.maxAutoStrafe, this.driveTrainConfig.maxAutoStrafe);
+                MotionState yawState = this.yawMotionProfile.get(deltaTime);
 
-               // opMode.telemetry.addData("Navigate3", "------navigateToRelativeLocation drive: %f strafe: %f turn: %f\n", drive, strafe, turn);
+                this.yawFController.setTargetPosition(yawState.getX());
+                this.yawFController.setTargetVelocity(yawState.getV());
+                this.yawFController.setTargetAcceleration(yawState.getA());
+
+                double strafeF = Range.clip(-this.yawFController.update(this.currentRelativePositionTarget.yaw, referenceTag.ftcPose.yaw), -this.driveTrainConfig.maxAutoStrafe, this.driveTrainConfig.maxAutoStrafe);
+
+
+
+                opMode.telemetry.addData("Navigate21", "correctionN: %f correctionF: %f drive: %f driveF: %f\n" +
+                                " deltaTime: %f; state.getX(): %f; state.getV():%f; state.getA():%f\n",
+                                correctionN, correctionF, drive, driveF,
+                                deltaTime, rangeState.getX(),rangeState.getV(),rangeState.getA());
+
                 opMode.telemetry.update();
 
-                driveTrain.moveRobot(drive, strafe, turn);
 
-                //this.opMode.sleep(2000);
+                //driveTrain.moveRobot(drive, strafe, turn);
+                driveTrain.moveRobot(driveF, strafeF, turnF);
 
                 return Status.RUNNING;
         }
@@ -215,52 +299,48 @@ public class Navigate implements ActionFunction {
                 return Status.SUCCESS;
         }
 
-        private void setMotionProfile(){
-        /*        double maxVelocity = 25;
-                double maxAcceleration = 40;
-                double maxDeceleration = 40;
-                double maxJerk = 100;
+        private void setMotionProfiles(){
+               double rangeMaxVelocity = 80;
+                double rangeMaxAcceleration = 30;
+                double rangeMaxJerk = 20;
 
-                MotionProfile profile = MotionProfileGenerator.generateSimpleMotionProfile(
-                        new MotionState(0, 0, 0),
-                        new MotionState(60, 0, 0),
-                        maxVelocity,
-                        maxAcceleration,
-                        maxJerk
+                this.rangeMotionProfile = MotionProfileGenerator.generateSimpleMotionProfile(
+                        new MotionState(initialPose.range, 10, 0),
+                        new MotionState(currentRelativePositionTarget.range, 0, 0),
+                        rangeMaxVelocity,
+                        rangeMaxAcceleration,
+                        rangeMaxJerk
                 );
 
-                // specify coefficients/gains
-                PIDCoefficients coeffs = new PIDCoefficients(kP, kI, kD);
-// create the controller
-                PIDFController controller = new PIDFController(coeffs);
 
-                // specify the setpoint
-                controller.setTargetPosition(setpoint);
+                double headingMaxVelocity = 5;
+                double headingMaxAcceleration = 1;
+                double headingMaxJerk = 5;
 
-// in each iteration of the control loop
-// measure the position or output variable
-// apply the correction to the input variable
-                double correction = controller.update(measuredPosition);
+                this.headingMotionProfile = MotionProfileGenerator.generateSimpleMotionProfile(
+                        new MotionState(initialPose.bearing,0,0),
+                        new MotionState(0, 0, 0),
+                        headingMaxVelocity,
+                        headingMaxAcceleration,
+                        headingMaxJerk
+                );
 
-                // Define the initial and final poses
-                Pose2d startPose = new Pose2d(0, 0, 0);
-                Pose2d endPose = new Pose2d(24, 0, 0);
 
-                MotionState startState = new MotionState(startPose.getX(),0,0,0);
+                double yawMaxVelocity = 5;
+                double yawMaxAcceleration = 1;
+                double yawMaxJerk = 5;
 
-                List<MotionSegment> segments = new ArrayList<MotionSegment>();
-                segments.add(new MotionSegment(startState,0));
-                segments.add(new MotionSegment(new MotionState(10,5,0,0),5));
-                segments.add(new MotionSegment(new MotionState(10,5,0,0),5));
-                segments.add(new MotionSegment(new MotionState(10,5,0,0),5));
+                this.yawMotionProfile = MotionProfileGenerator.generateSimpleMotionProfile(
+                        new MotionState(initialPose.yaw, 0, 0),
+                        new MotionState(0, 0, 0),
+                        yawMaxVelocity,
+                        yawMaxAcceleration,
+                        yawMaxJerk
+                );
 
-                MotionProfile profile1= new MotionProfile().
+                opMode.telemetry.addData("Navigate++++", "rangeMotionProfile: %s \n" ,
+                        rangeMotionProfile.getSegments().toString());
 
-                // Generate a motion profile based on the start and end poses
-                MotionProfile profile = new MotionProfileBuilder(startState).
-                        .addSegment(startPose, new MotionState(0, 0, 0, 0))
-                        .addSegment(endPose, new MotionState(0, 0, 0, 0))
-                        .build();
-*/
+                opMode.telemetry.update();
         }
 }

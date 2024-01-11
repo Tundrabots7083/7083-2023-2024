@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.behaviorTree.general.GlobalStore;
 import org.firstinspires.ftc.teamcode.behaviorTree.general.Status;
 import org.firstinspires.ftc.teamcode.models.ErrorTolerances;
 import org.firstinspires.ftc.teamcode.models.NavigationType;
-import org.firstinspires.ftc.teamcode.models.PIDCoeficients;
+import org.firstinspires.ftc.teamcode.models.PIDNCoeficients;
 import org.firstinspires.ftc.teamcode.models.RelativePosition;
 
 public class NavigateRA1 extends Navigate {
@@ -40,7 +40,7 @@ public class NavigateRA1 extends Navigate {
     }
 
     private void setRelativePositionTargetParameters(GlobalStore globalStore){
-        RelativePosition currentTarget = new RelativePosition(7,30,0,0);
+        RelativePosition currentTarget = new RelativePosition(7,40,0,0);
         globalStore.setValue("CurrentTarget", currentTarget);
 
         globalStore.setValue("ReferenceAprilTagId",7);
@@ -51,20 +51,20 @@ public class NavigateRA1 extends Navigate {
         globalStore.setValue("NavigationType", NavigationType.RELATIVE);
     }
     private void setPIDCoeficients(@NonNull GlobalStore globalStore){
-        PIDCoeficients pidCoeficients = new PIDCoeficients();
-        pidCoeficients.HKd=0.0;
-        pidCoeficients.HKi=0.022;
-        pidCoeficients.HKp=0.028;
+        PIDNCoeficients PIDNCoeficients = new PIDNCoeficients();
+        PIDNCoeficients.HKd=0.0;
+        PIDNCoeficients.HKi=0.022;
+        PIDNCoeficients.HKp=0.028;
 
-        pidCoeficients.RKd=0;
-        pidCoeficients.RKi=0.15;
-        pidCoeficients.RKp=0.023;
+        PIDNCoeficients.RKd=0;
+        PIDNCoeficients.RKi=0.15;
+        PIDNCoeficients.RKp=0.23;//0.023
 
-        pidCoeficients.YKd=0.01;
-        pidCoeficients.YKi=0.01;
-        pidCoeficients.YKp=0.015;
+        PIDNCoeficients.YKd=0.01;
+        PIDNCoeficients.YKi=0.01;
+        PIDNCoeficients.YKp=0.015;
 
-        globalStore.setValue("PIDCoeficients", pidCoeficients);
+        globalStore.setValue("PIDCoeficients", PIDNCoeficients);
     }
 
     private void setErrorTolerances(GlobalStore globalStore){

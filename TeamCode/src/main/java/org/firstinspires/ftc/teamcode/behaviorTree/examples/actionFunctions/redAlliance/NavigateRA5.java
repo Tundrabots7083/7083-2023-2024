@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.behaviorTree.examples.actionFunctions.Navi
 import org.firstinspires.ftc.teamcode.behaviorTree.general.GlobalStore;
 import org.firstinspires.ftc.teamcode.behaviorTree.general.Status;
 import org.firstinspires.ftc.teamcode.models.ErrorTolerances;
-import org.firstinspires.ftc.teamcode.models.PIDCoeficients;
+import org.firstinspires.ftc.teamcode.models.PIDNCoeficients;
 import org.firstinspires.ftc.teamcode.models.RelativePosition;
 
 public class NavigateRA5 extends Navigate {
@@ -45,20 +45,20 @@ public class NavigateRA5 extends Navigate {
     }
 
     private void setPIDCoeficients(GlobalStore globalStore){
-        PIDCoeficients pidCoeficients = new PIDCoeficients();
-        pidCoeficients.HKd=0.0;
-        pidCoeficients.HKi=0.12;
-        pidCoeficients.HKp=0.028;
+        PIDNCoeficients PIDNCoeficients = new PIDNCoeficients();
+        PIDNCoeficients.HKd=0.0;
+        PIDNCoeficients.HKi=0.12;
+        PIDNCoeficients.HKp=0.028;
 
-        pidCoeficients.RKd=0;
-        pidCoeficients.RKi=0.12;
-        pidCoeficients.RKp=0.023;
+        PIDNCoeficients.RKd=0;
+        PIDNCoeficients.RKi=0.12;
+        PIDNCoeficients.RKp=0.023;
 
-        pidCoeficients.YKd=0;
-        pidCoeficients.YKi=0.1;
-        pidCoeficients.YKp=0.02;
+        PIDNCoeficients.YKd=0;
+        PIDNCoeficients.YKi=0.1;
+        PIDNCoeficients.YKp=0.02;
 
-        globalStore.setValue("PIDCoeficients", pidCoeficients);
+        globalStore.setValue("PIDCoeficients", PIDNCoeficients);
     }
 
     private void setErrorTolerances(GlobalStore globalStore){

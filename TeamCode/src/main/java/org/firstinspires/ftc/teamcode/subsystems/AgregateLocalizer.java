@@ -36,6 +36,11 @@ public class AgregateLocalizer implements Localizer {
     @NonNull
     @Override
     public Pose2d getPoseEstimate() {
+        if(aprilTagRobotPose !=null){
+            poseEstimate = aprilTagRobotPose;
+        } else {
+            poseEstimate=odometryWheelLocalizer.getPoseEstimate();
+        }
         return poseEstimate;
     }
 
@@ -47,6 +52,7 @@ public class AgregateLocalizer implements Localizer {
     @Nullable
     @Override
     public Pose2d getPoseVelocity() {
+        poseVelocity = odometryWheelLocalizer.getPoseVelocity();
         return poseVelocity;
     }
 
