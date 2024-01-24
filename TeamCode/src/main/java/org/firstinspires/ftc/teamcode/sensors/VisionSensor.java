@@ -8,21 +8,13 @@ import org.firstinspires.ftc.vision.VisionPortal;
 public class VisionSensor {
 
     FirstVisionProcessor visionProcessor;
-
-
     WebcamName frontWebcamName;
-
-
-
     VisionPortal frontWebcamPortal;
-
-
 
     public VisionSensor(WebcamName frontWebcamName) {
         this.frontWebcamName = frontWebcamName;
         visionProcessor = new FirstVisionProcessor();
     }
-
 
     public void initializeVisionPortal() {
         frontWebcamPortal = VisionPortal.easyCreateWithDefaults(frontWebcamName, visionProcessor);
@@ -43,5 +35,4 @@ public class VisionSensor {
             frontWebcamPortal.close();
         }
     }
-
 }

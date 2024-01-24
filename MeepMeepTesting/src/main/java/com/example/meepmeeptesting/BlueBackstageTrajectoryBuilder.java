@@ -17,7 +17,6 @@ public class BlueBackstageTrajectoryBuilder implements AutonomousTrajectoryBuild
     public static final int MIDDLE_SPIKE_BASE_HEADING = -90;
     public static final int OUTER_SPIKE_BASE_HEADING = -90;
 
-
     public static final Pose2d BACK_STAGE_PARKING_POSITION = new Pose2d(59, 59, Math.toRadians(180));
 
     @Override

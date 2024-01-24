@@ -7,7 +7,7 @@ import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import org.firstinspires.ftc.teamcode.processors.TeamElementLocation;
 
 public class BlueFrontstageTrajectoryGenerator implements TrajectoryGenerator {
-    
+
     public static final Pose2d INNER_SPIKE_POSITION = new Pose2d(-35, 32, Math.toRadians(0));
     public static final int INNER_SPIKE_BASE_HEADING = 180;
 
@@ -15,6 +15,9 @@ public class BlueFrontstageTrajectoryGenerator implements TrajectoryGenerator {
     public static final int MIDDLE_SPIKE_BASE_HEADING = -90;
     public static final Pose2d OUTER_SPIKE_POSITION = new Pose2d(-47, 40, Math.toRadians(-90));
     public static final int OUTER_SPIKE_BASE_HEADING = -90;
+
+    public static final Pose2d UNDER_STAGE_TARGET_POSITION = new Pose2d(-36, 58, Math.toRadians(180));
+
     public static final Pose2d BACK_STAGE_PARKING_POSITION = new Pose2d(59, 59, Math.toRadians(180));
 
     TeamElementLocation targetLocation;
@@ -28,7 +31,7 @@ public class BlueFrontstageTrajectoryGenerator implements TrajectoryGenerator {
         // The first step is to drive the robot from the starting position to the correct spike mark.
         Pose2d spikePose;
         int spikeHeading = 0;
-        if (targetLocation == TeamElementLocation.INNER) {
+        if (targetLocation == TeamElementLocation.LEFT) {
             spikePose = INNER_SPIKE_POSITION;
             spikeHeading = INNER_SPIKE_BASE_HEADING;
         } else if (targetLocation == TeamElementLocation.MIDDLE) {
@@ -49,7 +52,7 @@ public class BlueFrontstageTrajectoryGenerator implements TrajectoryGenerator {
     }
 
     public Trajectory toPreStageCrossing(TrajectoryBuilder builder) {
-        builder.splineToLinearHeading(new Pose2d(12, 36, Math.toRadians(0)), Math.toRadians(0));
+        builder.splineToLinearHeading(UNDER_STAGE_TARGET_POSITION, Math.toRadians(0));
         return builder.build();
     }
 }

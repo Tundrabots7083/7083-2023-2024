@@ -6,7 +6,6 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -52,11 +51,11 @@ public class RedAllianceRightParkRight extends LinearOpMode {
         visionPortal.close(); // TODO: to use the vision portal elsewhere, then remove this line
 
         switch (selection) {
-            case INNER:
+            case LEFT:
                 telemetry.addLine("Left Spike Mark");
                 telemetry.update();
                 break;
-            case OUTER:
+            case RIGHT:
                 telemetry.addLine("Right Spike Mark");
                 telemetry.update();
                 break;
