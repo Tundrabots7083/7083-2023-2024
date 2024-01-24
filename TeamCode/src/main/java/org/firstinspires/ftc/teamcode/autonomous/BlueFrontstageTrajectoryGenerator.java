@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 
@@ -8,17 +9,17 @@ import org.firstinspires.ftc.teamcode.processors.TeamElementLocation;
 
 public class BlueFrontstageTrajectoryGenerator implements TrajectoryGenerator {
 
-    public static final Pose2d INNER_SPIKE_POSITION = new Pose2d(-35, 32, Math.toRadians(0));
+    public static final Pose2d INNER_SPIKE_POSITION = new Pose2d(-39, 35, Math.toRadians(0));
     public static final int INNER_SPIKE_BASE_HEADING = 180;
 
-    public static final Pose2d MIDDLE_SPIKE_POSITION = new Pose2d(-36, 34, Math.toRadians(-90));
+    public static final Pose2d MIDDLE_SPIKE_POSITION = new Pose2d(-34, 42, Math.toRadians(-90));
     public static final int MIDDLE_SPIKE_BASE_HEADING = -90;
-    public static final Pose2d OUTER_SPIKE_POSITION = new Pose2d(-47, 40, Math.toRadians(-90));
+    public static final Pose2d OUTER_SPIKE_POSITION = new Pose2d(-47, 50, Math.toRadians(-90));
     public static final int OUTER_SPIKE_BASE_HEADING = -90;
 
-    public static final Pose2d UNDER_STAGE_TARGET_POSITION = new Pose2d(-36, 58, Math.toRadians(180));
-
-    public static final Pose2d BACK_STAGE_PARKING_POSITION = new Pose2d(59, 59, Math.toRadians(180));
+    public static final Vector2d BACK_STAGE_REVERSE_POSITION = new Vector2d(-27, 60);
+    public static final Vector2d UNDER_STAGE_TARGET_POSITION = new Vector2d(-12, 60);
+    public static final Vector2d BACK_STAGE_PARKING_POSITION = new Vector2d(59, 61);
 
     TeamElementLocation targetLocation;
 
@@ -30,7 +31,7 @@ public class BlueFrontstageTrajectoryGenerator implements TrajectoryGenerator {
     public Trajectory toSpikeMark(TrajectoryBuilder builder) {
         // The first step is to drive the robot from the starting position to the correct spike mark.
         Pose2d spikePose;
-        int spikeHeading = 0;
+        int spikeHeading;
         if (targetLocation == TeamElementLocation.LEFT) {
             spikePose = INNER_SPIKE_POSITION;
             spikeHeading = INNER_SPIKE_BASE_HEADING;
@@ -41,18 +42,20 @@ public class BlueFrontstageTrajectoryGenerator implements TrajectoryGenerator {
             spikePose = OUTER_SPIKE_POSITION;
             spikeHeading = OUTER_SPIKE_BASE_HEADING;
         }
-        builder.splineToLinearHeading(spikePose, Math.toRadians(spikeHeading));
-        return builder.build();
+        return builder.splineToLinearHeading(spikePose, Math.toRadians(spikeHeading))
+                .build();
     }
 
     @Override
-    public Trajectory toParkingSpot(TrajectoryBuilder builder) {
-        builder.splineToLinearHeading(BACK_STAGE_PARKING_POSITION, Math.toRadians(0));
-        return builder.build();
+    public Trajectory toParkingSpotCenter(TrajectoryBuilder builder) {
+        return builder.splineTo(BACK_STAGE_PARKING_POSITION, Math.toRadians(0))
+                .build();
     }
 
-    public Trajectory toPreStageCrossing(TrajectoryBuilder builder) {
-        builder.splineToLinearHeading(UNDER_STAGE_TARGET_POSITION, Math.toRadians(0));
-        return builder.build();
+    public Trajectory toParkingSpotEdge(TrajectoryBuilder builder) {
+        return builder.splineTo(BACK_STAGE_REVERSE_POSITION, Math.toRadians(0))
+                .splineTo(UNDER_STAGE_TARGET_POSITION, Math.toRadians(0))
+                .splineTo(BACK_STAGE_PARKING_POSITION, Math.toRadians(0))
+                .build();
     }
 }

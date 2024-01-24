@@ -21,9 +21,10 @@ public class VisionSensor {
     }
 
     public boolean webcamInitialized() {
+
         return frontWebcamPortal != null
-                && (frontWebcamPortal.getCameraState() == VisionPortal.CameraState.CAMERA_DEVICE_READY
-                || frontWebcamPortal.getCameraState() == VisionPortal.CameraState.STREAMING);
+                && /*(frontWebcamPortal.getCameraState() == VisionPortal.CameraState.CAMERA_DEVICE_READY
+                ||*/ frontWebcamPortal.getCameraState() == VisionPortal.CameraState.STREAMING/*)*/;
     }
 
     public TeamElementLocation getTeamElementLocation() {

@@ -29,16 +29,14 @@ public class BlueAllianceFrontstageParkEdge extends LinearOpMode {
 
         visionSensor.initializeVisionPortal();
 
-        while(visionSensor.webcamInitialized()) {
-            // Wait for webcam to initialize
-            telemetry.addData("Webcam", "Initializing...");
-            telemetry.update();
-        }
+        while(!visionSensor.webcamInitialized()) {}
 
         telemetry.addData("Webcam", "Initialized");
         telemetry.update();
 
         waitForStart();
+
+        visionSensor.close();
 
         TeamElementLocation element = visionSensor.getTeamElementLocation();
 
@@ -64,15 +62,8 @@ public class BlueAllianceFrontstageParkEdge extends LinearOpMode {
         telemetry.addLine("Driving to parking spot");
         telemetry.update();
 
-        // Prepare to drive under the stage
-        Trajectory toPreStageCrossing = trajectoryGenerator.toPreStageCrossing(drive.trajectoryBuilder(drive.getPoseEstimate(), true));
-        drive.followTrajectory(toPreStageCrossing);
-
-        telemetry.addLine("Preparing to drive under stage");
-        telemetry.update();
-
         // Drive to the parking spot
-        Trajectory toParkingSpot = trajectoryGenerator.toParkingSpot(drive.trajectoryBuilder(drive.getPoseEstimate(), true));
+        Trajectory toParkingSpot = trajectoryGenerator.toParkingSpotEdge(drive.trajectoryBuilder(drive.getPoseEstimate(), true));
         drive.followTrajectory(toParkingSpot);
 
         while (opModeIsActive()) {

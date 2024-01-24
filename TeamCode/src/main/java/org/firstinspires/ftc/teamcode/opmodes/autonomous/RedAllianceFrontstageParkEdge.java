@@ -15,8 +15,8 @@ import org.firstinspires.ftc.teamcode.processors.FirstVisionProcessor;
 import org.firstinspires.ftc.teamcode.processors.TeamElementLocation;
 import org.firstinspires.ftc.vision.VisionPortal;
 
-@Autonomous(name = "Red Alliance Right Park Right", group ="Active")
-public class RedAllianceRightParkRight extends LinearOpMode {
+@Autonomous(name = "Red Alliance Right Park Right", group ="Autonomous")
+public class RedAllianceFrontstageParkEdge extends LinearOpMode {
     private AutoMecanumDrive drive;
     private PixelMover pixelMover;
     private FirstVisionProcessor visionProcessor;

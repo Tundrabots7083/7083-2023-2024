@@ -7,6 +7,7 @@ public interface TrajectoryGenerator {
 
     Trajectory toSpikeMark(TrajectoryBuilder builder);
 
-    Trajectory toParkingSpot(TrajectoryBuilder builder);
+    Trajectory toParkingSpotCenter(TrajectoryBuilder builder);
 
+    Trajectory toParkingSpotEdge(TrajectoryBuilder builder);
 }
