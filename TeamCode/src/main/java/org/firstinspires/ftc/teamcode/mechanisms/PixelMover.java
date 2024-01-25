@@ -32,8 +32,9 @@ public class PixelMover implements Mechanism {
     public static double CONTAINER_ROLLER_FORWARD_POWER = 1.0;
     public static double CONTAINER_ROLLER_REVERSE_POWER = -1.0;
     public static double CONTAINER_ROLLER_STOPPED_POWER = -.08;
-    public static double BRUSH_ROLLER_FORWARD_POWER = 0.08;
+    public static double BRUSH_ROLLER_FORWARD_POWER = 0.1;
     public static double BRUSH_ROLLER_REVERSE_POWER = -0.5;
+    public static int TOP_PIXEL_DROP_OFF_TIME = 3000;
     private enum PixelMoverState {
         PICKING_UP,
         DROPPING_OFF_LOCKED,
@@ -210,7 +211,7 @@ public class PixelMover implements Mechanism {
         brushRoller.setPower(BRUSH_ROLLER_FORWARD_POWER);
         containerRoller.setPower(CONTAINER_ROLLER_FORWARD_POWER);
         try {
-            Thread.sleep(250);
+            Thread.sleep(TOP_PIXEL_DROP_OFF_TIME);
         } catch (Exception e) {
             telemetry.addLine("PixelMover:  Exception thrown trying to do sleep in dropOffTopPixel method.");
         }

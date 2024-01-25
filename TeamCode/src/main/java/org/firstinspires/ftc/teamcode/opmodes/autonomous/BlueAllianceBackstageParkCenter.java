@@ -32,7 +32,6 @@ public class BlueAllianceBackstageParkCenter extends LinearOpMode {
 
         PixelMover pixelMover = new PixelMover("pixelMover", "Collects pixels and moves them", hardwareMap);
 
-
         visionSensor.initializeVisionPortal();
 
         // Wait for webcam to initialize
@@ -61,8 +60,6 @@ public class BlueAllianceBackstageParkCenter extends LinearOpMode {
         telemetry.update();
         // Deposit the purple pixel
         pixelMover.dropOffTopPixel(telemetry);
-
-        sleep(3000);
 
         telemetry.addLine("Driving to parking spot");
         telemetry.update();

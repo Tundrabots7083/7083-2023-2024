@@ -28,7 +28,7 @@ public class Arm implements Mechanism {
      */
     public enum Position {
         Start(0, 0, 0),
-        Intake(0, 0, 0.61),
+        Intake(0, 0, 0.65),
         ScoreLow(2900, 0, 0.25),
         ScoreMedium(2750, 0, 0.25),
         ScoreHigh(2500, 0, 0.25),
@@ -55,7 +55,7 @@ public class Arm implements Mechanism {
     // PID control constants. TODO: change to private final once tuned
     public static double ARM_KP = 0.0053;
     public static double ARM_KI = 0.0;
-    public static double ARM_KD = 0.0;
+    public static double ARM_KD = 0.00055;
     public static double INTEGRAL_LIMIT = 1;
 
     public static int TOLERABLE_ERROR = 20;

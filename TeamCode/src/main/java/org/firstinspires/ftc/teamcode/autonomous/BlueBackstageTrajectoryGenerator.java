@@ -9,11 +9,11 @@ import org.firstinspires.ftc.teamcode.processors.TeamElementLocation;
 
 public class BlueBackstageTrajectoryGenerator implements TrajectoryGenerator {
 
-    public static final Pose2d BACK_STAGE_INNER_SPIKE_BASE = new Pose2d(16, 32, Math.toRadians(180));
+    public static final Pose2d BACK_STAGE_INNER_SPIKE_BASE = new Pose2d(16, 35, Math.toRadians(180));
     public static final int INNER_SPIKE_BASE_HEADING = 180;
-    public static final Pose2d BACK_STAGE_MIDDLE_SPIKE_BASE = new Pose2d(11, 34, Math.toRadians(-90));
+    public static final Pose2d BACK_STAGE_MIDDLE_SPIKE_BASE = new Pose2d(11, 42, Math.toRadians(-90));
     public static final int MIDDLE_SPIKE_BASE_HEADING = -90;
-    public static final Pose2d BACK_STAGE_OUTER_SPIKE_BASE = new Pose2d(23, 32, Math.toRadians(-90));
+    public static final Pose2d BACK_STAGE_OUTER_SPIKE_BASE = new Pose2d(23, 50, Math.toRadians(-90));
     public static final int OUTER_SPIKE_BASE_HEADING = -90;
 
     public static final Vector2d BACK_STAGE_REVERSE_POSITION = new Vector2d(27, 55);
@@ -32,7 +32,7 @@ public class BlueBackstageTrajectoryGenerator implements TrajectoryGenerator {
 
         // The first step is to drive the robot from the starting position to the correct spike mark.
         Pose2d spikePose;
-        int spikeHeading = 0;
+        int spikeHeading;
         if (targetLocation == TeamElementLocation.LEFT) {
             spikePose = BACK_STAGE_OUTER_SPIKE_BASE;
             spikeHeading = OUTER_SPIKE_BASE_HEADING;

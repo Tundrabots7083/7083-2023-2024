@@ -57,8 +57,6 @@ public class BlueAllianceFrontstageParkEdge extends LinearOpMode {
         // Deposit the purple pixel
         pixelMover.dropOffTopPixel(telemetry);
 
-        sleep(3000);
-
         telemetry.addLine("Driving to parking spot");
         telemetry.update();
 
