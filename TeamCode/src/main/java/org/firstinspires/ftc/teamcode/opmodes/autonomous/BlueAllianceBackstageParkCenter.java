@@ -79,10 +79,5 @@ public class BlueAllianceBackstageParkCenter extends LinearOpMode {
         // Drive to the parking spot
         Trajectory toParkingSpot = trajectoryGenerator.toParkingSpotCenter(drive.trajectoryBuilder(drive.getPoseEstimate(), true));
         drive.followTrajectory(toParkingSpot);
-
-        while (opModeIsActive()) {
-            // Do nothing
-            idle();
-        }
     }
 }
