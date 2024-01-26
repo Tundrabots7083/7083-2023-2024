@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.sensors.VisionSensor;
 @Autonomous(name="Blue Alliance Frontstage Park Edge", group="Autonomous")
 public class BlueAllianceFrontstageParkEdge extends LinearOpMode {
 
-    public static final Pose2d STARTING_POSE = new Pose2d(-36, -63.5, Math.toRadians(90));
+    public static final Pose2d STARTING_POSE = new Pose2d(-36, 63.5, Math.toRadians(-90));
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -43,19 +43,16 @@ public class BlueAllianceFrontstageParkEdge extends LinearOpMode {
         telemetry.update();
         visionSensor.close();
 
+        telemetry.addLine("Lock the pixels");
+        telemetry.update();
+        pixelMover.start(telemetry, true);
+
         telemetry.addLine("Lower the pixel container");
         telemetry.update();
         arm.setTarget(Arm.Position.Start);
         arm.update();
         arm.setTarget(Arm.Position.Intake);
         arm.update();
-
-        telemetry.addLine("Lock the pixels");
-        telemetry.update();
-        pixelMover.start(telemetry, true);
-
-        telemetry.addData("Element", element);
-        telemetry.update();
 
         TrajectoryGenerator trajectoryGenerator = new BlueFrontstageTrajectoryGenerator(element);
 
@@ -77,10 +74,5 @@ public class BlueAllianceFrontstageParkEdge extends LinearOpMode {
         // Drive to the parking spot
         Trajectory toParkingSpot = trajectoryGenerator.toParkingSpotEdge(drive.trajectoryBuilder(drive.getPoseEstimate(), true));
         drive.followTrajectory(toParkingSpot);
-
-        while (opModeIsActive()) {
-            // Do nothing
-            idle();
-        }
     }
 }

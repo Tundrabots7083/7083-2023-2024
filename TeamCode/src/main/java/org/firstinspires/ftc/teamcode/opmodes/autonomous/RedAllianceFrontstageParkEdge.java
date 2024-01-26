@@ -43,16 +43,16 @@ public class RedAllianceFrontstageParkEdge extends LinearOpMode {
         telemetry.update();
         visionSensor.close();
 
+        telemetry.addLine("Lock the pixels");
+        telemetry.update();
+        pixelMover.start(telemetry, true);
+
         telemetry.addLine("Lower the pixel container");
         telemetry.update();
         arm.setTarget(Arm.Position.Start);
         arm.update();
         arm.setTarget(Arm.Position.Intake);
         arm.update();
-
-        telemetry.addLine("Lock the pixels");
-        telemetry.update();
-        pixelMover.start(telemetry, true);
 
         TrajectoryGenerator trajectoryGenerator = new RedFrontstageTrajectoryGenerator(element);
 

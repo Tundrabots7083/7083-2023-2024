@@ -11,6 +11,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.autonomous.BlueBackstageTrajectoryGenerator;
 import org.firstinspires.ftc.teamcode.autonomous.TrajectoryGenerator;
 import org.firstinspires.ftc.teamcode.drive.AutoMecanumDrive;
+import org.firstinspires.ftc.teamcode.mechanisms.Arm;
 import org.firstinspires.ftc.teamcode.mechanisms.PixelMover;
 import org.firstinspires.ftc.teamcode.processors.TeamElementLocation;
 import org.firstinspires.ftc.teamcode.sensors.VisionSensor;
@@ -18,7 +19,7 @@ import org.firstinspires.ftc.teamcode.sensors.VisionSensor;
 @Autonomous(name="Blue Alliance Backstage Park Center", group="Autonomous")
 public class BlueAllianceBackstageParkCenter extends LinearOpMode {
 
-    public static final Pose2d STARTING_POSE = new Pose2d(12, 63.5, Math.toRadians(270));
+    public static final Pose2d STARTING_POSE = new Pose2d(12, 63.5, Math.toRadians(-90));
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -27,13 +28,13 @@ public class BlueAllianceBackstageParkCenter extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
         VisionSensor visionSensor = new VisionSensor(hardwareMap.get(WebcamName.class, "Webcam Front"));
+        visionSensor.initializeVisionPortal();
 
         AutoMecanumDrive drive = new AutoMecanumDrive(hardwareMap, telemetry);
         drive.setPoseEstimate(STARTING_POSE);
 
         PixelMover pixelMover = new PixelMover("pixelMover", "Collects pixels and moves them", hardwareMap);
-
-        visionSensor.initializeVisionPortal();
+        Arm arm = new Arm("arm", "Arm", hardwareMap);
 
         // Wait for webcam to initialize
         while(!visionSensor.webcamInitialized()) {}
@@ -47,6 +48,17 @@ public class BlueAllianceBackstageParkCenter extends LinearOpMode {
         telemetry.addData("Element", element);
         telemetry.update();
         visionSensor.close();
+
+        telemetry.addLine("Lock the pixels");
+        telemetry.update();
+        pixelMover.start(telemetry, true);
+
+        telemetry.addLine("Lower the pixel container");
+        telemetry.update();
+        arm.setTarget(Arm.Position.Start);
+        arm.update();
+        arm.setTarget(Arm.Position.Intake);
+        arm.update();
 
         TrajectoryGenerator trajectoryGenerator = new BlueBackstageTrajectoryGenerator(element);
 

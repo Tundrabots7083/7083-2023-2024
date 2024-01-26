@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.sensors.VisionSensor;
 @Autonomous(name="Blue Alliance Backstage Park Edge", group="Autonomous")
 public class BlueAllianceBackstageParkEdge extends LinearOpMode {
 
-    public static final Pose2d STARTING_POSE = new Pose2d(12, 63.5, Math.toRadians(270));
+    public static final Pose2d STARTING_POSE = new Pose2d(12, 63.5, Math.toRadians(-90));
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -49,16 +49,16 @@ public class BlueAllianceBackstageParkEdge extends LinearOpMode {
         telemetry.update();
         visionSensor.close();
 
+        telemetry.addLine("Lock the pixels");
+        telemetry.update();
+        pixelMover.start(telemetry, true);
+
         telemetry.addLine("Lower the pixel container");
         telemetry.update();
         arm.setTarget(Arm.Position.Start);
         arm.update();
         arm.setTarget(Arm.Position.Intake);
         arm.update();
-
-        telemetry.addLine("Lock the pixels");
-        telemetry.update();
-        pixelMover.start(telemetry, true);
 
         TrajectoryGenerator trajectoryGenerator = new BlueBackstageTrajectoryGenerator(element);
 
