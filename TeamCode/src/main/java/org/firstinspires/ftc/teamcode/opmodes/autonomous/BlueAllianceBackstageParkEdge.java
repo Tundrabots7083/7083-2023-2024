@@ -9,7 +9,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.autonomous.BlueBackstageTrajectoryGenerator;
+import org.firstinspires.ftc.teamcode.autonomous.TrajectoryGenerator;
 import org.firstinspires.ftc.teamcode.drive.AutoMecanumDrive;
+import org.firstinspires.ftc.teamcode.mechanisms.Arm;
 import org.firstinspires.ftc.teamcode.mechanisms.PixelMover;
 import org.firstinspires.ftc.teamcode.processors.TeamElementLocation;
 import org.firstinspires.ftc.teamcode.sensors.VisionSensor;
@@ -26,13 +28,13 @@ public class BlueAllianceBackstageParkEdge extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
         VisionSensor visionSensor = new VisionSensor(hardwareMap.get(WebcamName.class, "Webcam Front"));
+        visionSensor.initializeVisionPortal();
 
         AutoMecanumDrive drive = new AutoMecanumDrive(hardwareMap, telemetry);
         drive.setPoseEstimate(STARTING_POSE);
 
         PixelMover pixelMover = new PixelMover("pixelMover", "Collects pixels and moves them", hardwareMap);
-
-        visionSensor.initializeVisionPortal();
+        Arm arm = new Arm("arm", "Arm", hardwareMap);
 
         // Wait for webcam to initialize
         while(!visionSensor.webcamInitialized()) {}
@@ -47,7 +49,18 @@ public class BlueAllianceBackstageParkEdge extends LinearOpMode {
         telemetry.update();
         visionSensor.close();
 
-        BlueBackstageTrajectoryGenerator trajectoryGenerator = new BlueBackstageTrajectoryGenerator(element);
+        telemetry.addLine("Lower the pixel container");
+        telemetry.update();
+        arm.setTarget(Arm.Position.Start);
+        arm.update();
+        arm.setTarget(Arm.Position.Intake);
+        arm.update();
+
+        telemetry.addLine("Lock the pixels");
+        telemetry.update();
+        pixelMover.start(telemetry, true);
+
+        TrajectoryGenerator trajectoryGenerator = new BlueBackstageTrajectoryGenerator(element);
 
         Trajectory toSpikeMark = trajectoryGenerator.toSpikeMark(drive.trajectoryBuilder(STARTING_POSE));
 
@@ -66,10 +79,5 @@ public class BlueAllianceBackstageParkEdge extends LinearOpMode {
         // Drive to the parking spot
         Trajectory toParkingSpot = trajectoryGenerator.toParkingSpotEdge(drive.trajectoryBuilder(drive.getPoseEstimate(), true));
         drive.followTrajectory(toParkingSpot);
-
-        while (opModeIsActive()) {
-            // Do nothing
-            idle();
-        }
     }
 }

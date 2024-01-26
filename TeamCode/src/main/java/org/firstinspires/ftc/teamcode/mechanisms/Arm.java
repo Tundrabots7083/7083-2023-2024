@@ -23,15 +23,21 @@ import java.util.Collection;
  */
 @Config
 public class Arm implements Mechanism {
+    public static int LOW_ARM_POSITION = 2900;
+    public static int MEDIUM_ARM_POSITION = 2815;
+    public static int HIGH_ARM_POSITION = 2550;
+    public static double LOW_SERVO_POSITION = 0.30;
+    public static double MEDIUM_SERVO_POSITION = 0.30;
+    public static double HIGH_SERVO_POSITION = 0.30;
     /**
      * Position defines the position of the arm and pixel container.
      */
     public enum Position {
         Start(0, 0, 0),
         Intake(0, 0, 0.65),
-        ScoreLow(2900, 0, 0.25),
-        ScoreMedium(2750, 0, 0.25),
-        ScoreHigh(2500, 0, 0.25),
+        ScoreLow(LOW_ARM_POSITION, 0, LOW_SERVO_POSITION),
+        ScoreMedium(MEDIUM_ARM_POSITION, 0, MEDIUM_SERVO_POSITION),
+        ScoreHigh(HIGH_ARM_POSITION, 0, HIGH_SERVO_POSITION),
         Hang(2000, 0, 0.65),
         LaunchDrone(1455, 0, 1.0);
 
@@ -54,8 +60,8 @@ public class Arm implements Mechanism {
 
     // PID control constants. TODO: change to private final once tuned
     public static double ARM_KP = 0.0053;
-    public static double ARM_KI = 0.0;
-    public static double ARM_KD = 0.00055;
+    public static double ARM_KI = 0.01;
+    public static double ARM_KD = 0.00013;
     public static double INTEGRAL_LIMIT = 1;
 
     public static int TOLERABLE_ERROR = 20;
@@ -131,6 +137,10 @@ public class Arm implements Mechanism {
         }
     }
 
+    public void stopArm() {
+        armMotor.setPower(0);
+    }
+
     public void setArmPower(double power) {
         power = Range.clip(power, -1, 1);
         armMotor.setPower(power);
@@ -144,6 +154,7 @@ public class Arm implements Mechanism {
 
         // Short-circuit the processing if the arm is at it's target
         if (isAtTarget()) {
+            armMotor.setPower(0);
             return;
         }
 

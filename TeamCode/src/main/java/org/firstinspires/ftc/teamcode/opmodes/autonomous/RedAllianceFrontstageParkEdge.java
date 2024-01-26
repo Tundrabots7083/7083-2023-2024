@@ -1,138 +1,78 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.autonomous.RedFrontstageTrajectoryGenerator;
+import org.firstinspires.ftc.teamcode.autonomous.TrajectoryGenerator;
 import org.firstinspires.ftc.teamcode.drive.AutoMecanumDrive;
+import org.firstinspires.ftc.teamcode.mechanisms.Arm;
 import org.firstinspires.ftc.teamcode.mechanisms.PixelMover;
-import org.firstinspires.ftc.teamcode.processors.FirstVisionProcessor;
 import org.firstinspires.ftc.teamcode.processors.TeamElementLocation;
-import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.teamcode.sensors.VisionSensor;
 
-@Autonomous(name = "Red Alliance Right Park Right", group ="Autonomous")
+@Autonomous(name="Red Alliance Frontstage Park Edge", group="Autonomous")
 public class RedAllianceFrontstageParkEdge extends LinearOpMode {
-    private AutoMecanumDrive drive;
-    private PixelMover pixelMover;
-    private FirstVisionProcessor visionProcessor;
-    private VisionPortal visionPortal;
+
+    public static final Pose2d STARTING_POSE = new Pose2d(-36, -63.5, Math.toRadians(90));
 
     @Override
     public void runOpMode() throws InterruptedException {
-        // Setup to send telemetry data to the FTC Dashboard
-        FtcDashboard dashboard = FtcDashboard.getInstance();
-        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
-        // Create the auto mecanum drive
-        drive = new AutoMecanumDrive(hardwareMap, telemetry);
+        VisionSensor visionSensor = new VisionSensor(hardwareMap.get(WebcamName.class, "Webcam Front"));
+        visionSensor.initializeVisionPortal();
 
-        // Create the pixel mover
-        pixelMover = new PixelMover("pixelmover", "Pixel Mover", hardwareMap);
+        AutoMecanumDrive drive = new AutoMecanumDrive(hardwareMap, telemetry);
+        drive.setPoseEstimate(STARTING_POSE);
 
-        // Get the spike mark with the team prop
-        visionProcessor = new FirstVisionProcessor();
-        visionPortal = VisionPortal.easyCreateWithDefaults(hardwareMap.get(WebcamName.class, "Webcam Front"), visionProcessor);
-        sleep(3 * 1000);
+        PixelMover pixelMover = new PixelMover("pixelMover", "Collects pixels and moves them", hardwareMap);
+        Arm arm = new Arm("arm", "Arm", hardwareMap);
 
-        telemetry.addLine("Initialization complete");
+        while(!visionSensor.webcamInitialized()) {}
+
+        telemetry.addData("Webcam", "Initialized");
         telemetry.update();
 
         waitForStart();
 
-        // Find the randomized team prop. This must be after waitForStart() to allow for
-        // randomization
-        TeamElementLocation selection = visionProcessor.getSelection();
-        telemetry.addData("Spike Mark", selection);
-        visionPortal.close(); // TODO: to use the vision portal elsewhere, then remove this line
+        TeamElementLocation element = visionSensor.getTeamElementLocation();
+        telemetry.addData("Element", element);
+        telemetry.update();
+        visionSensor.close();
 
-        switch (selection) {
-            case LEFT:
-                telemetry.addLine("Left Spike Mark");
-                telemetry.update();
-                break;
-            case RIGHT:
-                telemetry.addLine("Right Spike Mark");
-                telemetry.update();
-                break;
-            case MIDDLE:
-                telemetry.addLine("Right Spike Mark");
-                telemetry.update();
-                // middleSpikeMark();
-                break;
-            case NONE:
-                telemetry.addLine("Team Prop Not Detected");
-                telemetry.update();
-        }
-        middleSpikeMark();
-    }
+        telemetry.addLine("Lower the pixel container");
+        telemetry.update();
+        arm.setTarget(Arm.Position.Start);
+        arm.update();
+        arm.setTarget(Arm.Position.Intake);
+        arm.update();
 
-    /**
-     * Drops the purple pixel off on the middle spike mark, maneuvers to the backdrop and scores
-     * the yellow pixel in the middle, and then parks the robot to the right side of the backdrop.
-     */
-    private void middleSpikeMark() {
-        // Set starting pose
-        Pose2d startingPose = new Pose2d(12, -63.5, Math.toRadians(270));
-        drive.setPoseEstimate(startingPose);
+        telemetry.addLine("Lock the pixels");
+        telemetry.update();
+        pixelMover.start(telemetry, true);
 
-        // Move to center spike mark
-        Trajectory traj1 = drive.trajectoryBuilder(startingPose)
-                .forward(21.5)
-                .build();
+        TrajectoryGenerator trajectoryGenerator = new RedFrontstageTrajectoryGenerator(element);
 
-        // Move to center position on backdrop
-        Trajectory traj2a = drive.trajectoryBuilder(traj1.end())
-                .back(5)
-                .build();
-        Trajectory traj2b = drive.trajectoryBuilder(traj2a.end())
-                .strafeRight(20)
-                .splineTo(new Vector2d(48, -35), Math.toRadians(90))
-                .build();
+        Trajectory toSpikeMark = trajectoryGenerator.toSpikeMark(drive.trajectoryBuilder(STARTING_POSE));
 
-        // Park to the right of the backdrop
-        Trajectory traj3a = drive.trajectoryBuilder(traj2b.end())
-                .strafeLeft(24)
-                .build();
-        Trajectory traj3b = drive.trajectoryBuilder(traj3a.end())
-                .back(10)
-                .build();
+        // Drive to the correct spike mark
+        telemetry.addLine("Driving to spike mark");
+        telemetry.update();
+        drive.followTrajectory(toSpikeMark);
 
-        // Unpack the robot
-        telemetry.addLine("Drop Brush Roller");
-        telemetry.addLine("Move Pixel Container to Intake Position");
+        telemetry.addLine("Dropping off pixels");
+        telemetry.update();
+        // Deposit the purple pixel
+        pixelMover.dropOffTopPixel(telemetry);
+
+        telemetry.addLine("Driving to parking spot");
         telemetry.update();
 
-        // Drive to the spike mark and drop off the pixel
-        drive.followTrajectory(traj1);
-        telemetry.addLine("Drop Off Purple Pixel");
-        telemetry.update();
-        pixelMover.dropOffPixels();
-        sleep(1000);
-
-        /*
-        // Drive to the backdrop, raise the arm and rotate the pixel container, and score the pixel
-        drive.followTrajectory(traj2a);
-        drive.followTrajectory(traj2b);
-        telemetry.addLine("Raise Arm and Rotate Pixel Container");
-        telemetry.update();
-        sleep(1000);
-        telemetry.addLine("Score Yellow Pixel");
-        telemetry.update();
-        sleep(1000);
-
-        // Park the robot on the right side of the backdrop
-        telemetry.addLine("Return Arm/Container to Intake Position");
-        telemetry.update();
-        sleep(1*1000);
-        drive.followTrajectory(traj3a);
-        drive.followTrajectory(traj3b);
-        telemetry.addLine("Park Right");
-        telemetry.update();
-        */
+        // Drive to the parking spot
+        Trajectory toParkingSpot = trajectoryGenerator.toParkingSpotEdge(drive.trajectoryBuilder(drive.getPoseEstimate(), true));
+        drive.followTrajectory(toParkingSpot);
     }
 }

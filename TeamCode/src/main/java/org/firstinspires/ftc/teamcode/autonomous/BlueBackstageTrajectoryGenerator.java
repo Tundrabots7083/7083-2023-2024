@@ -50,15 +50,15 @@ public class BlueBackstageTrajectoryGenerator implements TrajectoryGenerator {
     @Override
     public Trajectory toParkingSpotCenter(TrajectoryBuilder builder) {
         return builder.splineTo(BACK_STAGE_REVERSE_POSITION, Math.toRadians(0))
-                .splineTo(BACK_STAGE_INTERMEDIATE_PARKING_POSITION, Math.toRadians(0))
-                .splineTo(BACK_STAGE_PARKING_POSITION_CENTER, Math.toRadians(0))
+                .splineToConstantHeading(BACK_STAGE_INTERMEDIATE_PARKING_POSITION, Math.toRadians(0))
+                .splineToConstantHeading(BACK_STAGE_PARKING_POSITION_CENTER, Math.toRadians(0))
                 .build();
     }
 
     @Override
     public Trajectory toParkingSpotEdge(TrajectoryBuilder builder) {
-        return builder.splineTo(BACK_STAGE_REVERSE_POSITION, Math.toRadians(0))
-                .splineTo(BACK_STAGE_PARKING_POSITION_EDGE, Math.toRadians(0))
+        return builder.splineToConstantHeading(BACK_STAGE_REVERSE_POSITION, Math.toRadians(0))
+                .splineToConstantHeading(BACK_STAGE_PARKING_POSITION_EDGE, Math.toRadians(0))
                 .build();
     }
 }

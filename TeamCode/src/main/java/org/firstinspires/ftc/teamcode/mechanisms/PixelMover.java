@@ -27,14 +27,15 @@ public class PixelMover implements Mechanism {
     public static double BACK_PUSHER_STOPPED_POSITION = 0.6;
     public static double BACK_PUSHER_PUSHED_POSITION = 0.25;
     public static double MIDDLE_LOCK_STOPPED_POSITION = 0.5;
-    public static double MIDDLE_LOCK_LOCKED_POSITION = 0.25;
+    public static double MIDDLE_LOCK_LOCKED_POSITION = 0.15;
     public static double STOPPED_POWER = 0.0;
     public static double CONTAINER_ROLLER_FORWARD_POWER = 1.0;
     public static double CONTAINER_ROLLER_REVERSE_POWER = -1.0;
     public static double CONTAINER_ROLLER_STOPPED_POWER = -.08;
     public static double BRUSH_ROLLER_FORWARD_POWER = 0.1;
     public static double BRUSH_ROLLER_REVERSE_POWER = -0.5;
-    public static int TOP_PIXEL_DROP_OFF_TIME = 3000;
+    public static int TOP_PIXEL_DROP_OFF_TIME = 2000;
+    public static int BOTTOM_PIXEL_DROP_OFF_TIME = 3000;
     private enum PixelMoverState {
         PICKING_UP,
         DROPPING_OFF_LOCKED,
@@ -240,7 +241,7 @@ public class PixelMover implements Mechanism {
         containerBackPusher.setPosition(BACK_PUSHER_PUSHED_POSITION);
         // Wait for pixel to come out of container
         try {
-            Thread.sleep(250);
+            Thread.sleep(BOTTOM_PIXEL_DROP_OFF_TIME);
         } catch (Exception e) {
             telemetry.addLine("PixelMover:  Exception thrown trying to do sleep in dropOffBottomPixel method.");
         }

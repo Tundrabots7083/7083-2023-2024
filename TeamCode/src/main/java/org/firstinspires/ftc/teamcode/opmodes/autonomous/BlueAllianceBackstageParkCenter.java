@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.autonomous.BlueBackstageTrajectoryGenerator;
+import org.firstinspires.ftc.teamcode.autonomous.TrajectoryGenerator;
 import org.firstinspires.ftc.teamcode.drive.AutoMecanumDrive;
 import org.firstinspires.ftc.teamcode.mechanisms.PixelMover;
 import org.firstinspires.ftc.teamcode.processors.TeamElementLocation;
@@ -47,7 +48,7 @@ public class BlueAllianceBackstageParkCenter extends LinearOpMode {
         telemetry.update();
         visionSensor.close();
 
-        BlueBackstageTrajectoryGenerator trajectoryGenerator = new BlueBackstageTrajectoryGenerator(element);
+        TrajectoryGenerator trajectoryGenerator = new BlueBackstageTrajectoryGenerator(element);
 
         Trajectory toSpikeMark = trajectoryGenerator.toSpikeMark(drive.trajectoryBuilder(STARTING_POSE));
 

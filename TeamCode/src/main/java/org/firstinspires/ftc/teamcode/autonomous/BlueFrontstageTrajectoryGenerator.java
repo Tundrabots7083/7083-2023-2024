@@ -51,7 +51,9 @@ public class BlueFrontstageTrajectoryGenerator implements TrajectoryGenerator {
 
     @Override
     public Trajectory toParkingSpotEdge(TrajectoryBuilder builder) {
-        return builder.splineTo(BACK_STAGE_PARKING_POSITION_EDGE, Math.toRadians(0))
+        return builder.splineTo(BACK_STAGE_REVERSE_POSITION, Math.toRadians(0))
+                .splineTo(UNDER_STAGE_TARGET_POSITION, Math.toRadians(0))
+                .splineTo(BACK_STAGE_PARKING_POSITION_CENTER, Math.toRadians(0))
                 .build();
     }
 
