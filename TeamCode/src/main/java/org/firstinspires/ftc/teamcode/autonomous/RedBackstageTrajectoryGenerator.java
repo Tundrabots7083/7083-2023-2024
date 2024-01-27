@@ -13,9 +13,9 @@ public class RedBackstageTrajectoryGenerator implements TrajectoryGenerator {
     public static final Pose2d BACK_STAGE_INNER_SPIKE_BASE = new Pose2d(16, -35, Math.toRadians(-180));
     public static final int INNER_SPIKE_BASE_HEADING = 90;
     public final Pose2d BACK_STAGE_MIDDLE_SPIKE_BASE = new Pose2d(11, -42, Math.toRadians(90));
-    public static int MIDDLE_SPIKE_BASE_HEADING = 90;
+    public static int MIDDLE_SPIKE_BASE_HEADING = 0;
     public static final Pose2d BACK_STAGE_OUTER_SPIKE_BASE = new Pose2d(25, -50, Math.toRadians(90));
-    public static final int OUTER_SPIKE_BASE_HEADING = 90;
+    public static final int OUTER_SPIKE_BASE_HEADING = 0;
 
     public static final Vector2d BACK_STAGE_REVERSE_POSITION = new Vector2d(27, -55);
     public static final Vector2d BACK_STAGE_INTERMEDIATE_PARKING_POSITION = new Vector2d(50, -15);
@@ -53,7 +53,7 @@ public class RedBackstageTrajectoryGenerator implements TrajectoryGenerator {
         if (targetLocation != TeamElementLocation.LEFT) {
             builder.splineTo(BACK_STAGE_REVERSE_POSITION, Math.toRadians(0));
         }
-        return builder.splineToConstantHeading(BACK_STAGE_INTERMEDIATE_PARKING_POSITION, Math.toRadians(0))
+        return builder.splineTo(BACK_STAGE_INTERMEDIATE_PARKING_POSITION, Math.toRadians(0))
                 .splineToConstantHeading(BACK_STAGE_PARKING_POSITION_CENTER, Math.toRadians(0))
                 .build();
     }

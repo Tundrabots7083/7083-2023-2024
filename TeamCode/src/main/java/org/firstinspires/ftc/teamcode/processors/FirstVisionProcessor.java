@@ -19,7 +19,7 @@ import org.opencv.imgproc.Imgproc;
 @Config
 public class FirstVisionProcessor implements VisionProcessor {
 
-    public static double MIN_PERCENT_DIFFERENCE = 32;
+    public static double MIN_PERCENT_DIFFERENCE = 35;
     public Rect rectLeft = new Rect(0, 365, 155, 105);
     public Rect rectMiddle = new Rect(310, 320, 250, 95);
 
