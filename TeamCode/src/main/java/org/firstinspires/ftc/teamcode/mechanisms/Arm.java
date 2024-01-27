@@ -25,7 +25,7 @@ import java.util.Collection;
 public class Arm implements Mechanism {
     public static int LOW_ARM_POSITION = 2900;
     public static int MEDIUM_ARM_POSITION = 2815;
-    public static int HIGH_ARM_POSITION = 2550;
+    public static int HIGH_ARM_POSITION = 2600;
     public static double LOW_SERVO_POSITION = 0.30;
     public static double MEDIUM_SERVO_POSITION = 0.30;
     public static double HIGH_SERVO_POSITION = 0.30;
