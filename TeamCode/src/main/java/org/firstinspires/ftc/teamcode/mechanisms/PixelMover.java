@@ -34,7 +34,7 @@ public class PixelMover implements Mechanism {
     public static double CONTAINER_ROLLER_STOPPED_POWER = -.5;
     public static double BRUSH_ROLLER_FORWARD_POWER = 0.1;
     public static double BRUSH_ROLLER_REVERSE_POWER = -0.5;
-    public static int TOP_PIXEL_DROP_OFF_TIME = 2000;
+    public static int TOP_PIXEL_DROP_OFF_TIME = 3000;
     public static int BOTTOM_PIXEL_DROP_OFF_TIME = 3000;
     private enum PixelMoverState {
         PICKING_UP,

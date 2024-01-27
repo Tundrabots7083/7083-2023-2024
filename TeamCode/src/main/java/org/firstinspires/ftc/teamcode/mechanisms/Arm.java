@@ -39,7 +39,7 @@ public class Arm implements Mechanism {
         ScoreMedium(MEDIUM_ARM_POSITION, 0, MEDIUM_SERVO_POSITION),
         ScoreHigh(HIGH_ARM_POSITION, 0, HIGH_SERVO_POSITION),
         Hang(2000, 0, 0.65),
-        LaunchDrone(1455, 0, 1.0);
+        LaunchDrone(1505, 0, 1.0);
 
         public final int armPosition;
         public final int liftPosition;

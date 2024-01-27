@@ -85,26 +85,7 @@ public class MecanumDrive implements Mechanism {
             rightRearPower /= power + turn;
         }
 
-        // Adjust the power to give a curve for ramping up power input
-        leftFrontPower = getAdjustedPower(leftFrontPower);
-        leftRearPower = getAdjustedPower(leftRearPower);
-        rightRearPower = getAdjustedPower(rightRearPower);
-        rightFrontPower = getAdjustedPower(rightFrontPower);
-
         setMotorPowers(leftFrontPower, leftRearPower, rightRearPower, rightFrontPower);
-    }
-
-    /**
-     * Adjust the power to provide more granular acceleration
-     * @param power the power based on the control
-     * @return the adjusted power
-     */
-    private double getAdjustedPower(double power) {
-        double sign = 1;
-        if (power < 0) {
-            sign = -1;
-        }
-        return Math.pow(power, 2) * sign;
     }
 
     /**
