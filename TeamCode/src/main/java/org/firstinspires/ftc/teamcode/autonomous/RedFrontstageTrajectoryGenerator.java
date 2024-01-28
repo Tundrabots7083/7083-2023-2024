@@ -25,7 +25,7 @@ public class RedFrontstageTrajectoryGenerator implements TrajectoryGenerator {
     public static final Vector2d PARKING_POSITION_CENTER = new Vector2d(59, -15.5);
     public static final Vector2d PARKING_POSITION_EDGE = new Vector2d(59, -62);
 
-    TeamElementLocation targetLocation;
+    private final TeamElementLocation targetLocation;
 
     public RedFrontstageTrajectoryGenerator(TeamElementLocation targetLocation) {
         this.targetLocation = targetLocation;
@@ -48,6 +48,26 @@ public class RedFrontstageTrajectoryGenerator implements TrajectoryGenerator {
         }
         return builder.splineToLinearHeading(spikePose, Math.toRadians(spikeHeading))
                 .build();
+    }
+
+    @Override
+    public Trajectory toArmLiftPosition(TrajectoryBuilder builder) {
+        return null;
+    }
+
+    @Override
+    public Trajectory toBackdropPosition(TrajectoryBuilder builder) {
+        return null;
+    }
+
+    @Override
+    public Trajectory toBackdropPosition(TrajectoryBuilder builder, double distance) {
+        return null;
+    }
+
+    @Override
+    public Trajectory toArmRetractionPosition(TrajectoryBuilder builder) {
+        return null;
     }
 
     @Override

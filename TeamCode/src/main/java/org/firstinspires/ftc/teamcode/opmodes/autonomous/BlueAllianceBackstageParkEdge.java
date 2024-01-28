@@ -55,8 +55,9 @@ public class BlueAllianceBackstageParkEdge extends LinearOpMode {
 
         telemetry.addLine("Lower the pixel container");
         telemetry.update();
-        arm.setTarget(Arm.Position.Start);
-        arm.update();
+        // TODO: See if this code is needed
+        // arm.setTarget(Arm.Position.Start);
+        // arm.update();
         arm.setTarget(Arm.Position.Intake);
         arm.update();
 
@@ -65,16 +66,48 @@ public class BlueAllianceBackstageParkEdge extends LinearOpMode {
         Trajectory toSpikeMark = trajectoryGenerator.toSpikeMark(drive.trajectoryBuilder(STARTING_POSE));
 
         // Drive to the correct spike mark
-        telemetry.addLine("Driving to spike mark");
+        telemetry.addLine("Drive to spike mark");
         telemetry.update();
         drive.followTrajectory(toSpikeMark);
 
-        telemetry.addLine("Dropping off pixels");
+        telemetry.addLine("Drop off purple pixel");
         telemetry.update();
         // Deposit the purple pixel
         pixelMover.dropOffTopPixel(telemetry);
 
-        telemetry.addLine("Driving to parking spot");
+        telemetry.addLine("Lift arm");
+        telemetry.update();
+        // Drive to the backdrop
+        Trajectory toArmLiftPosition = trajectoryGenerator.toArmLiftPosition(drive.trajectoryBuilder(drive.getPoseEstimate(), true));
+        drive.followTrajectory(toArmLiftPosition);
+
+        telemetry.addLine("Raise arm");
+        arm.setTarget(Arm.Position.ScoreLow);
+        while (!arm.isAtTarget()) {
+            arm.update();
+        }
+        arm.stopArm();
+
+        telemetry.addLine("Score yellow pixel on backdrop");
+        telemetry.update();
+        Trajectory toBackdropPosition = trajectoryGenerator.toArmLiftPosition(drive.trajectoryBuilder(drive.getPoseEstimate(), true));
+        drive.followTrajectory(toArmLiftPosition);
+        pixelMover.dropOffBottomPixel(telemetry);
+
+        telemetry.addLine("Move away from backdrop");
+        telemetry.update();
+        Trajectory toArmRetractionPosition = trajectoryGenerator.toArmRetractionPosition(drive.trajectoryBuilder(drive.getPoseEstimate(), true));
+        drive.followTrajectory(toArmRetractionPosition);
+
+        telemetry.addLine("Lower arm");
+        telemetry.update();
+        arm.setTarget(Arm.Position.Intake);
+        while (!arm.isAtTarget()) {
+            arm.update();
+        }
+        arm.stopArm();
+
+        telemetry.addLine("Drive to parking spot");
         telemetry.update();
         // Drive to the parking spot
         Trajectory toParkingSpot = trajectoryGenerator.toParkingSpotEdge(drive.trajectoryBuilder(drive.getPoseEstimate(), true));
