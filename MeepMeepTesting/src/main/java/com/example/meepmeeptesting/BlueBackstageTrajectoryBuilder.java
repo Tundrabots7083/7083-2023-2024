@@ -9,15 +9,15 @@ public class BlueBackstageTrajectoryBuilder implements AutonomousTrajectoryBuild
 
     public static final Pose2d STARTING_POSE = new Pose2d(12, 63.5, Math.toRadians(-90));
 
-    public static final Pose2d BACK_STAGE_INNER_SPIKE_BASE = new Pose2d(11, 32, Math.toRadians(180));
-    public static final Pose2d BACK_STAGE_MIDDLE_SPIKE_BASE = new Pose2d(12, 34, Math.toRadians(-90));
-    public static final Pose2d BACK_STAGE_OUTER_SPIKE_BASE = new Pose2d(23, 40, Math.toRadians(-90));
+    public static final Pose2d INNER_SPIKE_BASE = new Pose2d(11, 32, Math.toRadians(180));
+    public static final Pose2d MIDDLE_SPIKE_BASE = new Pose2d(12, 34, Math.toRadians(-90));
+    public static final Pose2d OUTER_SPIKE_BASE = new Pose2d(23, 40, Math.toRadians(-90));
 
     public static final int INNER_SPIKE_BASE_HEADING = 180;
     public static final int MIDDLE_SPIKE_BASE_HEADING = -90;
     public static final int OUTER_SPIKE_BASE_HEADING = -90;
 
-    public static final Pose2d BACK_STAGE_PARKING_POSITION = new Pose2d(59, 59, Math.toRadians(180));
+    public static final Pose2d PARKING_POSITION = new Pose2d(59, 59, Math.toRadians(180));
 
     @Override
     public TrajectorySequence getTrajectory(TeamElementLocation targetLocation, DriveShim drive) {
@@ -28,13 +28,13 @@ public class BlueBackstageTrajectoryBuilder implements AutonomousTrajectoryBuild
         Pose2d spikePose;
         int spikeHeading = 0;
         if (targetLocation == TeamElementLocation.INNER) {
-            spikePose = BACK_STAGE_INNER_SPIKE_BASE;
+            spikePose = INNER_SPIKE_BASE;
             spikeHeading = BlueBackstageTrajectoryBuilder.INNER_SPIKE_BASE_HEADING;
         } else if (targetLocation == TeamElementLocation.MIDDLE) {
-            spikePose = BACK_STAGE_MIDDLE_SPIKE_BASE;
+            spikePose = MIDDLE_SPIKE_BASE;
             spikeHeading = BlueBackstageTrajectoryBuilder.MIDDLE_SPIKE_BASE_HEADING;
         } else {
-            spikePose = BACK_STAGE_OUTER_SPIKE_BASE;
+            spikePose = OUTER_SPIKE_BASE;
             spikeHeading = BlueBackstageTrajectoryBuilder.OUTER_SPIKE_BASE_HEADING;
         }
 
@@ -45,7 +45,7 @@ public class BlueBackstageTrajectoryBuilder implements AutonomousTrajectoryBuild
         // Set the tangent to 0 so that the robot begins it's path by driving towards the backdrop
         builder.setTangent(Math.toRadians(0));
 
-        builder.splineToLinearHeading(BACK_STAGE_PARKING_POSITION, Math.toRadians(0));
+        builder.splineToLinearHeading(PARKING_POSITION, Math.toRadians(0));
 
 
         return builder.build();

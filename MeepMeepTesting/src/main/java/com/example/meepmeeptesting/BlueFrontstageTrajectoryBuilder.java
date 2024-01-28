@@ -19,7 +19,7 @@ public class BlueFrontstageTrajectoryBuilder implements AutonomousTrajectoryBuil
 
     public static final Pose2d UNDER_STAGE_TARGET_POSITION = new Pose2d(-36, 58, Math.toRadians(0));
 
-    public static final Pose2d BACK_STAGE_PARKING_POSITION = new Pose2d(59, 59, Math.toRadians(0));
+    public static final Pose2d PARKING_POSITION = new Pose2d(59, 59, Math.toRadians(0));
 
     @Override
     public TrajectorySequence getTrajectory(TeamElementLocation targetLocation, DriveShim drive) {
@@ -51,7 +51,7 @@ public class BlueFrontstageTrajectoryBuilder implements AutonomousTrajectoryBuil
         builder.setTangent(Math.toRadians(0));
 
         // Park the robot
-        builder.splineToLinearHeading(BACK_STAGE_PARKING_POSITION, Math.toRadians(0));
+        builder.splineToLinearHeading(PARKING_POSITION, Math.toRadians(0));
 
         return builder.build();
     }
