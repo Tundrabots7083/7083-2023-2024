@@ -16,10 +16,10 @@ public class BlueBackstageTrajectoryGenerator implements TrajectoryGenerator {
     public static final Pose2d BACK_STAGE_OUTER_SPIKE_BASE = new Pose2d(23.5, 50, Math.toRadians(-90));
     public static final int OUTER_SPIKE_BASE_HEADING = -90;
 
-    public static final Vector2d BACK_STAGE_REVERSE_POSITION = new Vector2d(27, 59);
-    public static final Vector2d BACK_STAGE_INTERMEDIATE_PARKING_POSITION = new Vector2d(52, 15);
-    public static final Vector2d BACK_STAGE_PARKING_POSITION_CENTER = new Vector2d(59, 15);
-    public static final Vector2d BACK_STAGE_PARKING_POSITION_EDGE = new Vector2d(59, 63);
+    public static final Vector2d REVERSE_POSITION = new Vector2d(27, 59);
+    public static final Vector2d INTERMEDIATE_PARKING_POSITION = new Vector2d(52, 15);
+    public static final Vector2d PARKING_POSITION_CENTER = new Vector2d(59, 15);
+    public static final Vector2d PARKING_POSITION_EDGE = new Vector2d(59, 63);
 
     TeamElementLocation targetLocation;
 
@@ -50,17 +50,17 @@ public class BlueBackstageTrajectoryGenerator implements TrajectoryGenerator {
     @Override
     public Trajectory toParkingSpotCenter(TrajectoryBuilder builder) {
         if (targetLocation != TeamElementLocation.RIGHT) {
-            builder.splineTo(BACK_STAGE_REVERSE_POSITION, Math.toRadians(0));
+            builder.splineTo(REVERSE_POSITION, Math.toRadians(0));
         }
-        return builder.splineTo(BACK_STAGE_INTERMEDIATE_PARKING_POSITION, Math.toRadians(0))
-                .splineToConstantHeading(BACK_STAGE_PARKING_POSITION_CENTER, Math.toRadians(0))
+        return builder.splineTo(INTERMEDIATE_PARKING_POSITION, Math.toRadians(0))
+                .splineToConstantHeading(PARKING_POSITION_CENTER, Math.toRadians(0))
                 .build();
     }
 
     @Override
     public Trajectory toParkingSpotEdge(TrajectoryBuilder builder) {
-        return builder.splineTo(BACK_STAGE_REVERSE_POSITION, Math.toRadians(0))
-                .splineToConstantHeading(BACK_STAGE_PARKING_POSITION_EDGE, Math.toRadians(0))
+        return builder.splineTo(REVERSE_POSITION, Math.toRadians(0))
+                .splineToConstantHeading(PARKING_POSITION_EDGE, Math.toRadians(0))
                 .build();
     }
 }
