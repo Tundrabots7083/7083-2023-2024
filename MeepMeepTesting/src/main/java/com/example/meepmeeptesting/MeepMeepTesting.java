@@ -9,11 +9,11 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 public class MeepMeepTesting {
 
 
-    public static final Pose2d BACK_STAGE_START_POSITION = new Pose2d(12, 63.5, Math.toRadians(-90));
+    public static final Pose2d START_POSITION = new Pose2d(12, 63.5, Math.toRadians(-90));
 
-    public static final Pose2d BACK_STAGE_INNER_SPIKE_BASE = new Pose2d(12, 40, Math.toRadians(-135));
-    public static final Pose2d BACK_STAGE_MIDDLE_SPIKE_BASE = new Pose2d(12, 40, Math.toRadians(-90));
-    public static final Pose2d BACK_STAGE_OUTER_SPIKE_BASE = new Pose2d(23, 40, Math.toRadians(-90));
+    public static final Pose2d INNER_SPIKE_BASE = new Pose2d(12, 40, Math.toRadians(-135));
+    public static final Pose2d MIDDLE_SPIKE_BASE = new Pose2d(12, 40, Math.toRadians(-90));
+    public static final Pose2d OUTER_SPIKE_BASE = new Pose2d(23, 40, Math.toRadians(-90));
 
     public static final int INNER_SPIKE_BASE_HEADING = 180;
 

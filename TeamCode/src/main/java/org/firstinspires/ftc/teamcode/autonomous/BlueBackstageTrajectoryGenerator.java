@@ -9,11 +9,11 @@ import org.firstinspires.ftc.teamcode.processors.TeamElementLocation;
 
 public class BlueBackstageTrajectoryGenerator implements TrajectoryGenerator {
 
-    public static final Pose2d BACK_STAGE_INNER_SPIKE_BASE = new Pose2d(16, 35, Math.toRadians(180));
+    public static final Pose2d INNER_SPIKE_BASE = new Pose2d(16, 35, Math.toRadians(180));
     public static final int INNER_SPIKE_BASE_HEADING = 180;
-    public static final Pose2d BACK_STAGE_MIDDLE_SPIKE_BASE = new Pose2d(11, 41, Math.toRadians(-90));
+    public static final Pose2d MIDDLE_SPIKE_BASE = new Pose2d(11, 41, Math.toRadians(-90));
     public static final int MIDDLE_SPIKE_BASE_HEADING = -90;
-    public static final Pose2d BACK_STAGE_OUTER_SPIKE_BASE = new Pose2d(23.5, 50, Math.toRadians(-90));
+    public static final Pose2d OUTER_SPIKE_BASE = new Pose2d(23.5, 50, Math.toRadians(-90));
     public static final int OUTER_SPIKE_BASE_HEADING = -90;
 
     public static final Vector2d REVERSE_POSITION = new Vector2d(27, 59);
@@ -34,13 +34,13 @@ public class BlueBackstageTrajectoryGenerator implements TrajectoryGenerator {
         Pose2d spikePose;
         int spikeHeading;
         if (targetLocation == TeamElementLocation.LEFT) {
-            spikePose = BACK_STAGE_OUTER_SPIKE_BASE;
+            spikePose = OUTER_SPIKE_BASE;
             spikeHeading = OUTER_SPIKE_BASE_HEADING;
         } else if (targetLocation == TeamElementLocation.MIDDLE) {
-            spikePose = BACK_STAGE_MIDDLE_SPIKE_BASE;
+            spikePose = MIDDLE_SPIKE_BASE;
             spikeHeading = MIDDLE_SPIKE_BASE_HEADING;
         } else {
-            spikePose = BACK_STAGE_INNER_SPIKE_BASE;
+            spikePose = INNER_SPIKE_BASE;
             spikeHeading = INNER_SPIKE_BASE_HEADING;
         }
         return builder.splineToLinearHeading(spikePose, Math.toRadians(spikeHeading))
