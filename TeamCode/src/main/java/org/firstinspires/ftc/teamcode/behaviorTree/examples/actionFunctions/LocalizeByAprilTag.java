@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.behaviorTree.examples.actionFunctions;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.behaviorTree.general.GlobalStore;
+import org.firstinspires.ftc.teamcode.behaviorTree.general.GlobalStoreSingleton;
 import org.firstinspires.ftc.teamcode.behaviorTree.general.ActionFunction;
 import org.firstinspires.ftc.teamcode.behaviorTree.general.Status;
 import org.firstinspires.ftc.teamcode.models.worldModel.WorldModel;
@@ -20,29 +20,42 @@ public class LocalizeByAprilTag implements ActionFunction {
     private  int desiredTagId=-1;
     private AprilTagDetection referenceTag = null;
 
-    private List<Pose2d> robotPoses = new ArrayList<Pose2d>();
+    private List<Pose2d> cameraAbsolutePoses = new ArrayList<Pose2d>();
+    //private List<Pose2d> robotPoses123 = new ArrayList<Pose2d>();
 
     private LinearOpMode opMode;
     public LocalizeByAprilTag(LinearOpMode opMode) {
         this.opMode=opMode;
     }
 
-    public Status perform(GlobalStore globalStore) {
-       setRobotPoses(globalStore);
+    public Status perform(GlobalStoreSingleton globalStore) {
+       setCameraAbsolutePoses(globalStore);
 
-       //Calculate the estimated robot pose as the average of calculated poses
-        Pose2d estPoseSum = robotPoses.stream().reduce(new Pose2d(0,0,0),(subtotal, element)->subtotal.plus(element));
-        Pose2d estRobotPose = estPoseSum.div(robotPoses.size());
+       //Calculate the estimated camera pose as the average of calculated poses
+        Pose2d estCameraPosesSum = cameraAbsolutePoses.stream().reduce(new Pose2d(0,0,0),(subtotal, element)->subtotal.plus(element));
+        Pose2d estCameraPose = estCameraPosesSum.div(cameraAbsolutePoses.size());
 
+        Pose2d estRobotPose = calculateRobotPoseFromCameraPose(estCameraPose);
+
+        globalStore.setValue("AprilTagCameraPose", estCameraPose);
         globalStore.setValue("AprilTagRobotPose", estRobotPose);
 
-        return Status.RUNNING;
+        opMode.telemetry.addData("LocalizeByAprilTag-", "Hr: %f Xr: %f Yr: %f",
+                estRobotPose.getHeading(),estRobotPose.getX(),estRobotPose.getY());
+        opMode.telemetry.update();
+
+        return Status.SUCCESS;
     }
 
-    private void setRobotPoses(GlobalStore globalStore){
+
+    private void setCameraAbsolutePoses(GlobalStoreSingleton globalStore){
         WorldModel worldModel =(WorldModel) globalStore.getValue("WorldModel");
 
         List<AprilTagDetection> currentDetections =  (List<AprilTagDetection>) globalStore.getValue("CurrentDetections");
+
+        if (currentDetections == null){
+            return;
+        }
 
         List<AprilTagDetection> validCurrentDetections = currentDetections.stream().filter(detection -> (detection.metadata != null)).collect(Collectors.toList());
 
@@ -55,35 +68,47 @@ public class LocalizeByAprilTag implements ActionFunction {
 
             Pose2d aprilTagPose =tagWorldObject.position;
 
-           robotPoses.add(calculateRobotPose(aprilTagPose, robotDetection));
+           cameraAbsolutePoses.add(calculateCameraPose(aprilTagPose, robotDetection));
         });
     }
 
-    private Pose2d calculateRobotPose(Pose2d aprilTagPose, AprilTagDetection robotDetection){
+    private Pose2d calculateCameraPose(Pose2d aprilTagPose, AprilTagDetection cameraDetection){
         double degToRadRatio = Math.PI/180;
 
-        double R = robotDetection.ftcPose.range;           // Range from AprilTag to robot
-        double bearing = degToRadRatio * robotDetection.ftcPose.bearing; // Bearing angle in radians
-        double yaw = degToRadRatio * robotDetection.ftcPose.yaw;   // Yaw angle in radians
+        double R = cameraDetection.ftcPose.range;           // Range from AprilTag to robot
+        double bearing = degToRadRatio * cameraDetection.ftcPose.bearing; // Bearing angle in radians
+        double yaw = degToRadRatio * cameraDetection.ftcPose.yaw;   // Yaw angle in radians
 
         // Calculate relative position of the robot to the aprilTag
         double xRelative = R * Math.cos(bearing);
         double yRelative = R * Math.sin(bearing);
-
-        opMode.telemetry.addData("LocalizeByAprilTag-", "calculateRobotPose Id: %d",robotDetection.id);
+/*
+        opMode.telemetry.addData("LocalizeByAprilTag-", "calculateCameraPose Id: %d",cameraDetection.id);
         opMode.telemetry.update();
         opMode.telemetry.addData("LocalizeByAprilTag-", "B: %f xRel: %f yRel: %f aprilTagPose Xr:%f; Yr:%f; Hr:%f;",bearing,xRelative,yRelative, aprilTagPose.getX(), aprilTagPose.getY(), aprilTagPose.getHeading());
         opMode.telemetry.update();
+*/
+        double cameraXAbsolute = aprilTagPose.getX() + xRelative * Math.cos(aprilTagPose.getHeading()*degToRadRatio) - yRelative * Math.sin(aprilTagPose.getHeading()*degToRadRatio);
+        double cameraYAbsolute = aprilTagPose.getY() + xRelative * Math.sin(aprilTagPose.getHeading()*degToRadRatio) + yRelative * Math.cos(aprilTagPose.getHeading()*degToRadRatio);
+        double cameraHeadingAbsolute = aprilTagPose.getHeading() + yaw;
 
-        double robotXAbsolute = aprilTagPose.getX() + xRelative * Math.cos(aprilTagPose.getHeading()*degToRadRatio) - yRelative * Math.sin(aprilTagPose.getHeading()*degToRadRatio);
-        double robotYAbsolute = aprilTagPose.getY() + xRelative * Math.sin(aprilTagPose.getHeading()*degToRadRatio) + yRelative * Math.cos(aprilTagPose.getHeading()*degToRadRatio);
-        double robotHeadingAbsolute = aprilTagPose.getHeading() + yaw;
-
-        Pose2d robotPose = new Pose2d(robotXAbsolute,robotYAbsolute,robotHeadingAbsolute);
+        Pose2d cameraAbsolutePose = new Pose2d(cameraXAbsolute,cameraYAbsolute,cameraHeadingAbsolute);
 
 
-        return robotPose;
+        return cameraAbsolutePose;
     }
 
+    private Pose2d calculateRobotPoseFromCameraPose(Pose2d cameraPose){
+        double CAMERA_X_OFFSET = 2.5625;// 2.265; // Camera x offset relative to the robot's center
+        double CAMERA_Y_OFFSET =7.625;// 7.5; // Camera y offset relative to the robot's center
 
+// Assuming cameraPose is the absolute pose of the camera
+        double robotCenterX = cameraPose.getX() - CAMERA_X_OFFSET * Math.cos(cameraPose.getHeading()) + CAMERA_Y_OFFSET * Math.sin(cameraPose.getHeading());
+        double robotCenterY = cameraPose.getY() - CAMERA_X_OFFSET * Math.sin(cameraPose.getHeading()) - CAMERA_Y_OFFSET * Math.cos(cameraPose.getHeading());
+        double robotCenterHeading = cameraPose.getHeading(); // The heading of the robot's center is assumed to be the same as the camera's heading
+
+// Now create a new Pose2d with the calculated components
+        Pose2d robotCenterPose = new Pose2d(robotCenterX, robotCenterY, robotCenterHeading);
+        return robotCenterPose;
+    }
 }

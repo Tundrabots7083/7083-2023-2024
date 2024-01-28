@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.behaviorTree.examples.actionFunctions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.behaviorTree.general.ActionFunction;
-import org.firstinspires.ftc.teamcode.behaviorTree.general.GlobalStore;
+import org.firstinspires.ftc.teamcode.behaviorTree.general.GlobalStoreSingleton;
 import org.firstinspires.ftc.teamcode.behaviorTree.general.Status;
 import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
 
@@ -15,7 +15,7 @@ public class DetectDeadWheelsLocalization  implements ActionFunction {
         //initialize dead wheel subsystem
     }
 
-    public Status perform(GlobalStore globalStore) {
+    public Status perform(GlobalStoreSingleton globalStore) {
         //read values from the dead wheels subsystem
         //interpret the values
         // calculate localization

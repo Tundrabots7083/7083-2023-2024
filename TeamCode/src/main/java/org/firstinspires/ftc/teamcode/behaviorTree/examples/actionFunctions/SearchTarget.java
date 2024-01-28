@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.behaviorTree.examples.actionFunctions;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.behaviorTree.general.GlobalStore;
+import org.firstinspires.ftc.teamcode.behaviorTree.general.GlobalStoreSingleton;
 import org.firstinspires.ftc.teamcode.behaviorTree.general.Status;
 import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.behaviorTree.general.ActionFunction;
@@ -19,7 +19,7 @@ public class SearchTarget implements ActionFunction {
         this.driveTrain = new DriveTrain(opMode);
     }
 
-    public Status perform(GlobalStore globalStore) {
+    public Status perform(GlobalStoreSingleton globalStore) {
         this.yawStep = (double) globalStore.getValue("YawStep");
 
         List<AprilTagDetection>  currentDetections =  (List<AprilTagDetection>) globalStore.getValue("CurrentDetections");

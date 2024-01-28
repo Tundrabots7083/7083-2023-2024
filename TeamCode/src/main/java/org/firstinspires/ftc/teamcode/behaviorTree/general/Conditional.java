@@ -10,7 +10,7 @@ public class Conditional extends Node {
     }
 
     @Override
-    public Status execute(GlobalStore globalStore) {
+    public Status execute(GlobalStoreSingleton globalStore) {
         boolean result = condition.check();
         System.out.println("Conditional check result: " + result);
         if (result == true) {

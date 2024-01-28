@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.behaviorTree.examples.actionFunctions.Navigate;
-import org.firstinspires.ftc.teamcode.behaviorTree.general.GlobalStore;
+import org.firstinspires.ftc.teamcode.behaviorTree.general.GlobalStoreSingleton;
 import org.firstinspires.ftc.teamcode.behaviorTree.general.Status;
 import org.firstinspires.ftc.teamcode.models.ErrorTolerances;
 import org.firstinspires.ftc.teamcode.models.NavigationType;
@@ -21,7 +21,7 @@ public class NavigateRA1 extends Navigate {
 
     }
 
-    public Status perform(GlobalStore globalStore) {
+    public Status perform(GlobalStoreSingleton globalStore) {
 
         if(lastStatus == Status.SUCCESS){
             return lastStatus;
@@ -39,18 +39,18 @@ public class NavigateRA1 extends Navigate {
         return status;
     }
 
-    private void setRelativePositionTargetParameters(GlobalStore globalStore){
+    private void setRelativePositionTargetParameters(GlobalStoreSingleton globalStore){
         RelativePosition currentTarget = new RelativePosition(7,40,0,0);
         globalStore.setValue("CurrentTarget", currentTarget);
 
         globalStore.setValue("ReferenceAprilTagId",7);
         globalStore.setValue("YawStep",-0.25);
     }
-    private void setNavigationType(GlobalStore globalStore){
+    private void setNavigationType(GlobalStoreSingleton globalStore){
 
         globalStore.setValue("NavigationType", NavigationType.RELATIVE);
     }
-    private void setPIDCoeficients(@NonNull GlobalStore globalStore){
+    private void setPIDCoeficients(@NonNull GlobalStoreSingleton globalStore){
         PIDNCoeficients PIDNCoeficients = new PIDNCoeficients();
         PIDNCoeficients.HKd=0.0;
         PIDNCoeficients.HKi=0.022;
@@ -67,7 +67,7 @@ public class NavigateRA1 extends Navigate {
         globalStore.setValue("PIDCoeficients", PIDNCoeficients);
     }
 
-    private void setErrorTolerances(GlobalStore globalStore){
+    private void setErrorTolerances(GlobalStoreSingleton globalStore){
         ErrorTolerances errorTolerances = new ErrorTolerances();
         errorTolerances.headingErrorTolerance=0.75;
         errorTolerances.rangeErrorTolerance=0.75;

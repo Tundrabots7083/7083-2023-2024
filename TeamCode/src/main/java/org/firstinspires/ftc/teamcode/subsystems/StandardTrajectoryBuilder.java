@@ -12,7 +12,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationCon
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 
-import org.firstinspires.ftc.teamcode.behaviorTree.general.GlobalStore;
+import org.firstinspires.ftc.teamcode.behaviorTree.general.GlobalStoreSingleton;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceRunner;
@@ -47,16 +47,16 @@ public class StandardTrajectoryBuilder {
     private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(MAX_ACCEL);
 
     private TrajectorySequenceRunner trajectorySequenceRunner;
-    private GlobalStore globalStore;
+    private GlobalStoreSingleton globalStore;
 
 
-    public StandardTrajectoryBuilder(TrajectorySequenceRunner trajectorySequenceRunner, GlobalStore globalStore){
+    public StandardTrajectoryBuilder(TrajectorySequenceRunner trajectorySequenceRunner, GlobalStoreSingleton globalStore){
         this.trajectorySequenceRunner=trajectorySequenceRunner;
         this.globalStore = globalStore;
 
     }
 
-    public StandardTrajectoryBuilder(GlobalStore globalStore){
+    public StandardTrajectoryBuilder(GlobalStoreSingleton globalStore){
         this.globalStore = globalStore;
     }
 

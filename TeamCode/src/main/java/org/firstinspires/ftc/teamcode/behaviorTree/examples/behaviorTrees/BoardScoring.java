@@ -1,16 +1,12 @@
 package org.firstinspires.ftc.teamcode.behaviorTree.examples.behaviorTrees;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.behaviorTree.examples.actionFunctions.DetectAprilTags;
 import org.firstinspires.ftc.teamcode.behaviorTree.examples.actionFunctions.LocalizeByAprilTag;
-import org.firstinspires.ftc.teamcode.behaviorTree.examples.actionFunctions.DetectTeamProp;
-import org.firstinspires.ftc.teamcode.behaviorTree.examples.actionFunctions.DetectDeadWheelsLocalization;
-import org.firstinspires.ftc.teamcode.behaviorTree.examples.actionFunctions.redAlliance.NavigateRA1Trajectory;
-import org.firstinspires.ftc.teamcode.behaviorTree.examples.actionFunctions.redAlliance.NavigateRA2Trajectory;
-import org.firstinspires.ftc.teamcode.behaviorTree.examples.actionFunctions.redAlliance.NavigateToTeamProp;
-import org.firstinspires.ftc.teamcode.behaviorTree.examples.actionFunctions.redAlliance.ScoreSpikePixel;
+import org.firstinspires.ftc.teamcode.behaviorTree.examples.actionFunctions.redAlliance.NavigateToScoringPosition1;
+import org.firstinspires.ftc.teamcode.behaviorTree.examples.actionFunctions.redAlliance.NavigateToStagingPosition1;
+import org.firstinspires.ftc.teamcode.behaviorTree.examples.actionFunctions.redAlliance.ScoreBoardPixel;
 import org.firstinspires.ftc.teamcode.behaviorTree.examples.worldModels.CenterStageWorldModel;
 import org.firstinspires.ftc.teamcode.behaviorTree.general.Action;
 import org.firstinspires.ftc.teamcode.behaviorTree.general.BehaviorTree;
@@ -19,22 +15,23 @@ import org.firstinspires.ftc.teamcode.behaviorTree.general.Node;
 import org.firstinspires.ftc.teamcode.behaviorTree.general.Sequence;
 import org.firstinspires.ftc.teamcode.behaviorTree.general.Status;
 import org.firstinspires.ftc.teamcode.models.DriveTrainConfig;
+import org.firstinspires.ftc.teamcode.models.StagingPosition;
 import org.firstinspires.ftc.teamcode.models.worldModel.WorldModel;
+import org.firstinspires.ftc.teamcode.subsystems.CenterStageVisionDetectorSingleton;
 
 import java.util.Arrays;
 
-public class RedAudienceAutonomousWithDeadWheels
-{
+public class BoardScoring {
     private BehaviorTree tree;
     private Node root;
     private GlobalStoreSingleton globalStore;
     private WorldModel worldModel;
     protected LinearOpMode opMode;
 
-    public RedAudienceAutonomousWithDeadWheels(LinearOpMode opMode) {
+    public BoardScoring(LinearOpMode opMode) {
         this.opMode = opMode;
 
-        opMode.telemetry.addData("RedAudienceAutonomousWithDeadWheels", "RedAudienceAutonomousWithDeadWheels started");
+        opMode.telemetry.addData("BoardScoring", "BoardScoring started");
         opMode.telemetry.update();
         Init();
     }
@@ -44,17 +41,16 @@ public class RedAudienceAutonomousWithDeadWheels
 
         this.globalStore = GlobalStoreSingleton.getInstance(opMode);
         this.initializeGlobalStore();
+        CenterStageVisionDetectorSingleton.reset();
 
         this.root = new Sequence(
                 Arrays.asList(
-                        //new Action(new DetectTeamProp(this.opMode),this.opMode),
                         new Action(new DetectAprilTags(this.opMode),this.opMode),
-                        new Action(new NavigateToTeamProp(this.opMode),this.opMode),
-                        //new Action(new ScoreSpikePixel(this.opMode),this.opMode),
-                        new Action(new NavigateRA1Trajectory(this.opMode),this.opMode)
-
-                ),this.opMode
-        );
+                        new Action(new LocalizeByAprilTag(this.opMode),this.opMode),
+                        new Action(new NavigateToStagingPosition1(this.opMode),this.opMode),
+                        new Action(new NavigateToScoringPosition1(this.opMode),this.opMode),
+                        new Action(new ScoreBoardPixel(this.opMode),this.opMode)
+                ),this.opMode);
 
         this.tree = new BehaviorTree(root, globalStore);
     }
@@ -65,16 +61,23 @@ public class RedAudienceAutonomousWithDeadWheels
         driveTrainConfig.turnGain=0.04;
 
         this.globalStore.setValue("DriveTrainConfig", driveTrainConfig);
+        this.globalStore.setValue("YawStep", 0.25);
         this.globalStore.setValue("WorldModel", this.worldModel);
 
-        this.globalStore.setValue("StartPose",new Pose2d());//to be set to the actual starting pose
+        this.globalStore.setValue("ReferenceAprilTagId",7);
+        this.globalStore.setValue("YawStep",-0.25);
+
+        this.globalStore.setValue("CurrentStagingPosition1", StagingPosition.RED_FIVE_CENTER);
+        this.globalStore.setValue("CurrentStagingPosition2", StagingPosition.RED_FIVE_RIGHT);
+
     }
     public Status run() {
         // Run the behavior tree
         Status result = tree.run();
-        opMode.telemetry.addData("RedAudienceAutonomousWithDeadWheels", "Run - Behavior tree result: %s",result);
+        opMode.telemetry.addData("BoardScoring", "Run - Behavior tree result: %s",result);
         opMode.telemetry.update();
 
         return result;
     }
 }
+

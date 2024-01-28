@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.behaviorTree.examples.actionFunctions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.behaviorTree.general.ActionFunction;
-import org.firstinspires.ftc.teamcode.behaviorTree.general.GlobalStore;
+import org.firstinspires.ftc.teamcode.behaviorTree.general.GlobalStoreSingleton;
 import org.firstinspires.ftc.teamcode.behaviorTree.general.Status;
 
 public class LocalizeByOdometry  implements ActionFunction {
@@ -16,7 +16,7 @@ public class LocalizeByOdometry  implements ActionFunction {
         //set localizer to mech drive
     }
 
-    public Status perform(GlobalStore globalStore) {
+    public Status perform(GlobalStoreSingleton globalStore) {
         return Status.SUCCESS;
     }
 }

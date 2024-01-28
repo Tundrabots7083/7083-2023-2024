@@ -5,7 +5,7 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.behaviorTree.examples.actionFunctions.Navigate;
-import org.firstinspires.ftc.teamcode.behaviorTree.general.GlobalStore;
+import org.firstinspires.ftc.teamcode.behaviorTree.general.GlobalStoreSingleton;
 import org.firstinspires.ftc.teamcode.behaviorTree.general.Status;
 import org.firstinspires.ftc.teamcode.models.NavigationType;
 import org.firstinspires.ftc.teamcode.subsystems.StandardTrajectoryBuilder;
@@ -19,7 +19,7 @@ public class NavigateRA2Trajectory extends Navigate {
 
     }
 
-    public Status perform(GlobalStore globalStore) {
+    public Status perform(GlobalStoreSingleton globalStore) {
 
         if(lastStatus == Status.SUCCESS){
             return lastStatus;
@@ -36,7 +36,7 @@ public class NavigateRA2Trajectory extends Navigate {
 
     }
 
-    private void setTrajectory(GlobalStore globalStore){
+    private void setTrajectory(GlobalStoreSingleton globalStore){
         double DISTANCE = 50;
 
         StandardTrajectoryBuilder standardTrajectoryBuilder=new StandardTrajectoryBuilder(globalStore);
@@ -46,7 +46,7 @@ public class NavigateRA2Trajectory extends Navigate {
 
         globalStore.setValue("CurrentTrajectory", currentTrajectory);
     }
-    private void setNavigationType(GlobalStore globalStore){
+    private void setNavigationType(GlobalStoreSingleton globalStore){
 
         globalStore.setValue("NavigationType", NavigationType.ABSOLUTE);
     }

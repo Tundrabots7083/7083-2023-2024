@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.behaviorTree.general.ActionFunction;
-import org.firstinspires.ftc.teamcode.behaviorTree.general.GlobalStore;
+import org.firstinspires.ftc.teamcode.behaviorTree.general.GlobalStoreSingleton;
 import org.firstinspires.ftc.teamcode.behaviorTree.general.Status;
 
 
@@ -24,7 +24,7 @@ public class ScoreSpikePixel implements ActionFunction {
 
     }
 
-    public Status perform(GlobalStore globalStore) {
+    public Status perform(GlobalStoreSingleton globalStore) {
         globalStore.setValue("ReferenceAprilTagId",-1);
 
         opMode.telemetry.addData("SearchSpikePixel", "perform;---lastStatus = %d", lastStatus);

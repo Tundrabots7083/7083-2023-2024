@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.behaviorTree.examples.actionFunctions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.behaviorTree.general.GlobalStore;
+import org.firstinspires.ftc.teamcode.behaviorTree.general.GlobalStoreSingleton;
 import org.firstinspires.ftc.teamcode.behaviorTree.general.ActionFunction;
 import org.firstinspires.ftc.teamcode.behaviorTree.general.Status;
 import org.firstinspires.ftc.teamcode.models.DriveTrainConfig;
@@ -33,7 +33,7 @@ public class NavigateRef implements ActionFunction {
         this.driveTrain = new DriveTrain(opMode);
     }
 
-    public Status perform(GlobalStore globalStore) {
+    public Status perform(GlobalStoreSingleton globalStore) {
         this.driveTrainConfig =(DriveTrainConfig) globalStore.getValue("DriveTrainConfig");
         this.desiredTargetDistance =(double) globalStore.getValue("DesiredTargetDistance");
         this.desiredTagId =(int) globalStore.getValue("DesiredTagId");
@@ -45,7 +45,7 @@ public class NavigateRef implements ActionFunction {
         return Status.SUCCESS;
     }
 
-    private void getCurrentDetections(GlobalStore globalStore){
+    private void getCurrentDetections(GlobalStoreSingleton globalStore){
         this.currentDetections =  (List<AprilTagDetection>) globalStore.getValue("CurrentDetections");
         opMode.telemetry.addData("getCurrentDetections", "Desired tag id ID %d \n", this.desiredTagId);
 

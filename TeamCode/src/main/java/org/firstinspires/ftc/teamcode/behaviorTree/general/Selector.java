@@ -16,7 +16,7 @@ public class Selector extends Node {
     }
 
     @Override
-    public Status execute(GlobalStore globalStore) {
+    public Status execute(GlobalStoreSingleton globalStore) {
         for (Node child : children) {
             Status status = child.execute(globalStore);
             opMode.telemetry.addData("Selector", "Selector status: %b",status == Status.SUCCESS);

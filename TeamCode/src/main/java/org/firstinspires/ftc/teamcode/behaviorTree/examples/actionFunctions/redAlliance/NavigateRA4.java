@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.behaviorTree.examples.actionFunctions.red
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.behaviorTree.examples.actionFunctions.Navigate;
-import org.firstinspires.ftc.teamcode.behaviorTree.general.GlobalStore;
+import org.firstinspires.ftc.teamcode.behaviorTree.general.GlobalStoreSingleton;
 import org.firstinspires.ftc.teamcode.behaviorTree.general.Status;
 import org.firstinspires.ftc.teamcode.models.ErrorTolerances;
 import org.firstinspires.ftc.teamcode.models.PIDNCoeficients;
@@ -18,7 +18,7 @@ public class NavigateRA4 extends Navigate {
 
     }
 
-    public Status perform(GlobalStore globalStore) {
+    public Status perform(GlobalStoreSingleton globalStore) {
 
         if(lastStatus == Status.SUCCESS){
             opMode.sleep(30);//allow the system time to change the referenceTargetId
@@ -44,7 +44,7 @@ public class NavigateRA4 extends Navigate {
         return status;
     }
 
-    private void setPIDCoeficients(GlobalStore globalStore){
+    private void setPIDCoeficients(GlobalStoreSingleton globalStore){
         PIDNCoeficients PIDNCoeficients = new PIDNCoeficients();
         PIDNCoeficients.HKd=0.0;
         PIDNCoeficients.HKi=0;
@@ -62,7 +62,7 @@ public class NavigateRA4 extends Navigate {
 
     }
 
-    private void setErrorTolerances(GlobalStore globalStore){
+    private void setErrorTolerances(GlobalStoreSingleton globalStore){
         ErrorTolerances errorTolerances = new ErrorTolerances();
         errorTolerances.headingErrorTolerance=2;
         errorTolerances.rangeErrorTolerance=2.5;

@@ -5,47 +5,74 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
+import org.firstinspires.ftc.teamcode.processors.FirstVisionProcessor;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.concurrent.TimeUnit;
 
-public class SpikeElementDetector {
+public class CenterStageVisionDetector {
 
-    //This is a placeholder class. to be implemented to detect the spike element
     private VisionPortal visionPortal; // Used to manage the video source.
-    private AprilTagProcessor aprilTagProcessor; //TODO change to tensor flow detector
+    private AprilTagProcessor aprilTagProcessor;
+    private FirstVisionProcessor visionProcessor;
     private LinearOpMode opMode=null;
-    public SpikeElementDetector(LinearOpMode opMode) {
-        opMode.telemetry.addData("AprilTagDetector", "AprilTagDetector started");
-        opMode.telemetry.update();
+    public CenterStageVisionDetector(LinearOpMode opMode) {
         this.opMode = opMode;
 
-        this.initAprilTag();
+        this.initialize();
+        //this.setManualExposure(6, 250);
         this.setManualExposure(6, 250);
     }
 
-    public AprilTagProcessor getSpikeElementProcessor() {
+    public AprilTagProcessor getAprilTagProcessor() {
         return this.aprilTagProcessor;
     }
-
-    private void initAprilTag() {
+    public FirstVisionProcessor getVisionProcessor() {
+        return this.visionProcessor;
+    }
+    /**
+     * Initialize the AprilTag processor.
+     */
+    private void initialize() {
         // Create the AprilTag processor by using a builder.
-        aprilTagProcessor = new AprilTagProcessor.Builder().build();
-        opMode.telemetry.addData("initAprilTag", "initAprilTag started");
+        if(aprilTagProcessor == null) {
+            aprilTagProcessor = new AprilTagProcessor.Builder().build();
+        }
+
+        // Create the AprilTag processor by using a builder.
+        if(visionProcessor == null) {
+            visionProcessor = new FirstVisionProcessor();
+        }
+
+        opMode.telemetry.addData("CenterStageVisionDetector", "initialize");
         opMode.telemetry.update();
+//////////////////////////////
+        // Get the spike mark with the team prop
+       // visionProcessor = new FirstVisionProcessor();
+ /*       visionPortal = VisionPortal.easyCreateWithDefaults(opMode.hardwareMap.get(WebcamName.class, "Webcam 1"),aprilTagProcessor);
+        opMode.sleep(3 * 1000);
+
+        opMode.telemetry.addLine("Initialization complete");
+        opMode.telemetry.update();
+*/
+///////////////////////////////////////////////////////////
         // Create the vision portal by using a builder.
+        //  if(visionPortal == null) {
 
         visionPortal = new VisionPortal.Builder()
                 .setCamera(opMode.hardwareMap.get(WebcamName.class, "Webcam 1"))
-                .addProcessor(aprilTagProcessor)
+                //.addProcessor(aprilTagProcessor)
+                .addProcessors(visionProcessor)
                 .build();
 
+
+        // }
     }
 
     /*
      * Manually set the camera gain and exposure.
-     * This can only be called AFTER calling initAprilTag(), and only works for
+     * This can only be called AFTER calling initialize(), and only works for
      * Webcams;
      */
     private void setManualExposure(int exposureMS, int gain) {
@@ -61,7 +88,7 @@ public class SpikeElementDetector {
             opMode.telemetry.update();
             while (!opMode.isStopRequested() && (visionPortal.getCameraState() !=
                     VisionPortal.CameraState.STREAMING)) {
-                // sleep(20);
+                opMode.sleep(20);
             }
             opMode.telemetry.addData("Camera", "Ready");
             opMode.telemetry.update();
@@ -73,13 +100,14 @@ public class SpikeElementDetector {
                     visionPortal.getCameraControl(ExposureControl.class);
             if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
                 exposureControl.setMode(ExposureControl.Mode.Manual);
-                // sleep(50);
+                opMode.sleep(50);
             }
             exposureControl.setExposure((long) exposureMS, TimeUnit.MILLISECONDS);
-            // sleep(20);
+            opMode.sleep(20);
+
             GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
             gainControl.setGain(gain);
-            // sleep(20);
+            opMode.sleep(20);
         }
     }
 }

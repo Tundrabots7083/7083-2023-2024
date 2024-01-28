@@ -3,7 +3,9 @@ package org.firstinspires.ftc.teamcode.processors;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
+import org.firstinspires.ftc.teamcode.models.Selected;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -12,16 +14,9 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
 public class FirstVisionProcessor implements VisionProcessor {
-    public enum Selected {
-        NONE,
-        LEFT,
-        MIDDLE,
-        RIGHT
-    }
-
-    public Rect rectLeft = new Rect(110, 42, 40, 40);
-    public Rect rectMiddle = new Rect(160, 42, 40, 40);
-    public Rect rectRight = new Rect(210, 42, 40, 40);
+    public Rect rectLeft = new Rect(0, 329, 155, 150);
+    public Rect rectMiddle = new Rect(195, 339, 250, 110);
+    public Rect rectRight = new Rect(485, 329, 155, 150);
     Selected selection = Selected.NONE;
     Mat submat = new Mat();
     Mat hsvMat = new Mat();

@@ -1,5 +1,18 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import static org.firstinspires.ftc.teamcode.models.CenterStageORDriveConstants.MAX_ACCEL;
+import static org.firstinspires.ftc.teamcode.models.CenterStageORDriveConstants.MAX_ANG_ACCEL;
+import static org.firstinspires.ftc.teamcode.models.CenterStageORDriveConstants.MAX_ANG_VEL;
+import static org.firstinspires.ftc.teamcode.models.CenterStageORDriveConstants.MAX_VEL;
+import static org.firstinspires.ftc.teamcode.models.CenterStageORDriveConstants.MOTOR_VELO_PID;
+import static org.firstinspires.ftc.teamcode.models.CenterStageORDriveConstants.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.models.CenterStageORDriveConstants.TRACK_WIDTH;
+import static org.firstinspires.ftc.teamcode.models.CenterStageORDriveConstants.kA;
+import static org.firstinspires.ftc.teamcode.models.CenterStageORDriveConstants.kStatic;
+import static org.firstinspires.ftc.teamcode.models.CenterStageORDriveConstants.kV;
+
+/* roadrunner constants
+
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ACCEL;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ANG_ACCEL;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ANG_VEL;
@@ -7,6 +20,12 @@ import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MOTOR_VELO_PID;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.RUN_USING_ENCODER;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.TRACK_WIDTH;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.encoderTicksToInches;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kA;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kStatic;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kV;
+
+ */
 
 import androidx.annotation.NonNull;
 
@@ -33,6 +52,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import org.firstinspires.ftc.teamcode.behaviorTree.general.GlobalStoreSingleton;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.StandardTrackingWheelLocalizer;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceRunner;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
@@ -41,19 +62,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class CenterStageMechanumDrive extends Drive {
-    private double kV;
-    private double kA;
-    private double kStatic;
+public class CenterStageORMechanumDrive extends Drive {
     private double trackWidth;
     private double wheelBase = trackWidth;
     private double lateralMultiplier = 1.0;
 
 
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8.7, 0, 0.98);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(8.7, 0, 0.98);
 
-    public static double LATERAL_MULTIPLIER = 1;
+    public static double LATERAL_MULTIPLIER = 1.25;
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
@@ -74,16 +92,15 @@ public class CenterStageMechanumDrive extends Drive {
     private LinearOpMode opMode;
     private DriveTrain driveTrain;
 
+    public Localizer localizer;
 
 
 
-    public CenterStageMechanumDrive(HardwareMap hardwareMap, double kV, double kA, double kStatic, double trackWidth, double wheelBase, double lateralMultiplier, LinearOpMode opMode) {
-        this.kV=kV;
-        this.kA = kA;
-        this.kStatic = kStatic;
-        this.trackWidth = trackWidth;
-        this.wheelBase = wheelBase;
-        this.lateralMultiplier = lateralMultiplier;
+
+    public CenterStageORMechanumDrive(HardwareMap hardwareMap, LinearOpMode opMode, GlobalStoreSingleton globalStore) {
+        this.trackWidth = TRACK_WIDTH;
+        this.wheelBase = TRACK_WIDTH;
+        this.lateralMultiplier = LATERAL_MULTIPLIER;
         this.opMode = opMode;
         this.driveTrain = new DriveTrain(opMode);
 
@@ -114,6 +131,11 @@ public class CenterStageMechanumDrive extends Drive {
         List<Integer> lastTrackingEncPositions = new ArrayList<>();
         List<Integer> lastTrackingEncVels = new ArrayList<>();
 
+       localizer = new CenterStageORAgregateLocalizer(globalStore,opMode, lastTrackingEncPositions, lastTrackingEncVels);
+        // setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap, lastTrackingEncPositions, lastTrackingEncVels));
+
+       this.setLocalizer(localizer);
+
         trajectorySequenceRunner = new TrajectorySequenceRunner(
                 follower, HEADING_PID, batteryVoltageSensor,
                 lastEncPositions, lastEncVels, lastTrackingEncPositions, lastTrackingEncVels
@@ -124,12 +146,12 @@ public class CenterStageMechanumDrive extends Drive {
     @NonNull
     @Override
     public Localizer getLocalizer() {
-        return null;
+        return localizer;
     }
 
     @Override
     public void setLocalizer(@NonNull Localizer localizer) {
-
+        this.localizer=localizer;
     }
 
     @Override
@@ -205,7 +227,7 @@ public class CenterStageMechanumDrive extends Drive {
 
     public void turn(double angle) {
         turnAsync(angle);
-       //waitForIdle();
+       waitForIdle();
     }
 
     public void followTrajectoryAsync(Trajectory trajectory) {
@@ -218,7 +240,7 @@ public class CenterStageMechanumDrive extends Drive {
 
     public void followTrajectory(Trajectory trajectory) {
         followTrajectoryAsync(trajectory);
-       // waitForIdle();
+       waitForIdle();
     }
 
     public void followTrajectorySequenceAsync(TrajectorySequence trajectorySequence) {
@@ -227,6 +249,20 @@ public class CenterStageMechanumDrive extends Drive {
 
     public void followTrajectorySequence(TrajectorySequence trajectorySequence) {
         followTrajectorySequenceAsync(trajectorySequence);
-        //waitForIdle();
+        waitForIdle();
+    }
+
+    public void update() {
+        updatePoseEstimate();
+        DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
+        if (signal != null) setDriveSignal(signal);
+    }
+    public void waitForIdle() {
+        while (!Thread.currentThread().isInterrupted() && isBusy())
+            update();
+    }
+
+    public boolean isBusy() {
+        return trajectorySequenceRunner.isBusy();
     }
 }

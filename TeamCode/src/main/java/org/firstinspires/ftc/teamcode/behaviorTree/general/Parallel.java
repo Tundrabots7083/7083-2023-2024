@@ -13,7 +13,7 @@ class Parallel extends Node {
     }
 
     @Override
-    public Status execute(GlobalStore globalStore) {
+    public Status execute(GlobalStoreSingleton globalStore) {
         List<Status> childStatuses = new ArrayList<>();
 
         for (Node child : children) {

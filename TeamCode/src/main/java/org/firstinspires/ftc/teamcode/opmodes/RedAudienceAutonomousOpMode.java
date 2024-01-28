@@ -6,12 +6,14 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.behaviorTree.examples.behaviorTrees.RedAudienceAutonomous;
+import org.firstinspires.ftc.teamcode.behaviorTree.examples.behaviorTrees.RedAudienceAutonomousWithDeadWheels;
 import org.firstinspires.ftc.teamcode.behaviorTree.general.Status;
 
 @Autonomous(name="BT Drive To AprilTag", group="vision")
 public class RedAudienceAutonomousOpMode extends LinearOpMode
 {
-    RedAudienceAutonomous behaviorTree = null;
+   RedAudienceAutonomous behaviorTree = null;
+    //  RedAudienceAutonomousWithDeadWheels behaviorTree = null;
 
     @Override
     public void runOpMode()
@@ -20,6 +22,7 @@ public class RedAudienceAutonomousOpMode extends LinearOpMode
         telemetry = dashboard.getTelemetry();
 
         telemetry.addData("BTAutoDriveToAprilTagOpMode", "runOpMode started");
+       // telemetry.addData("BTAutoDriveToAprilTagOpMode hw", this.hardwareMap.toString());
         telemetry.update();
         initialize(this);
         waitForStart();
@@ -28,6 +31,7 @@ public class RedAudienceAutonomousOpMode extends LinearOpMode
         {
             telemetry.addData("BTAutoDriveToAprilTagOpMode", "runOpMode while started");
             telemetry.update();
+
             Status result = this.behaviorTree.run();
 
             telemetry.addData("RedAudienceAutonomous", "Behavior tree result: %s",result);
@@ -44,6 +48,9 @@ public class RedAudienceAutonomousOpMode extends LinearOpMode
     private void initialize(LinearOpMode opMode){
 
         this.behaviorTree = new RedAudienceAutonomous(opMode);
+        //this.behaviorTree = new RedAudienceAutonomousWithDeadWheels(opMode);
+
+
     }
 
 }

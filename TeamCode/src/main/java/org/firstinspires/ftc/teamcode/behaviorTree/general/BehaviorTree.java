@@ -5,9 +5,9 @@ import org.firstinspires.ftc.teamcode.models.worldModel.WorldModel;
 
 public class BehaviorTree {
     private Node root;
-    private GlobalStore globalStore;
+    private GlobalStoreSingleton globalStore;
 
-    public BehaviorTree(Node root, GlobalStore globalStore) {
+    public BehaviorTree(Node root, GlobalStoreSingleton globalStore) {
         this.root = root;
         this.globalStore = globalStore;
     }

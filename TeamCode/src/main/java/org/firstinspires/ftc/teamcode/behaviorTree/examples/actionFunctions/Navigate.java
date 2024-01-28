@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.behaviorTree.examples.actionFunctions;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.control.PIDFController;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.profile.MotionProfile;
 import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
 import com.acmerobotics.roadrunner.profile.MotionState;
@@ -13,15 +14,20 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.behaviorTree.general.GlobalStore;
+import org.firstinspires.ftc.teamcode.behaviorTree.general.GlobalStoreSingleton;
 import org.firstinspires.ftc.teamcode.behaviorTree.general.ActionFunction;
+import org.firstinspires.ftc.teamcode.behaviorTree.general.GlobalStoreSingleton;
 import org.firstinspires.ftc.teamcode.behaviorTree.general.Status;
 import org.firstinspires.ftc.teamcode.models.DriveTrainConfig;
 import org.firstinspires.ftc.teamcode.models.ErrorTolerances;
 import org.firstinspires.ftc.teamcode.models.NavigationType;
 import org.firstinspires.ftc.teamcode.models.PIDNCoeficients;
 import org.firstinspires.ftc.teamcode.models.RelativePosition;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.subsystems.CenterStageORMechanumDrive;
+import org.firstinspires.ftc.teamcode.subsystems.CenterStageORMechanumDriveSingleton;
 import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
+import org.firstinspires.ftc.teamcode.subsystems.StandardTrajectoryBuilder;
 import org.firstinspires.ftc.teamcode.utils.PIDController;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
@@ -36,9 +42,9 @@ public class Navigate implements ActionFunction {
 
         private AprilTagDetection referenceTag = null;
         private AprilTagPoseFtc initialPose = null;
-        private double drive = 0; // Desired forward power/speed (-1 to +1)
-        private double strafe = 0; // Desired strafe power/speed (-1 to +1)
-        private double turn = 0; // Desired turning power/speed (-1 to +1)
+        private double drivePower = 0; // Desired forward power/speed (-1 to +1)
+        private double strafePower = 0; // Desired strafe power/speed (-1 to +1)
+        private double turnPower = 0; // Desired turning power/speed (-1 to +1)
 
         private DriveTrainConfig driveTrainConfig = null;
         private int referenceTagId = -1;
@@ -79,23 +85,34 @@ public class Navigate implements ActionFunction {
 
         ElapsedTime timer;
         private NanoClock clock;
-        double lastTime=0;
         double currentStartTime;
+
+    CenterStageORMechanumDriveSingleton drive = null;
+    //SampleMecanumDrive drive1 = null;
         public Navigate(LinearOpMode opMode) {
                 this.opMode = opMode;
                 this.driveTrain = new DriveTrain(opMode);
+
 
                 long MILLIS_IN_NANO = 1000000;
                 timer = new ElapsedTime(MILLIS_IN_NANO);
                 clock = NanoClock.system();
                 currentStartTime = clock.seconds();
+
+            GlobalStoreSingleton globalStore = GlobalStoreSingleton.getInstance(opMode);
+
+            if(this.drive == null) {
+                this.drive = CenterStageORMechanumDriveSingleton.getInstance(opMode.hardwareMap, opMode, globalStore);
+            }
+
         }
 
-        public Status perform(GlobalStore globalStore) {
+        public Status perform(GlobalStoreSingleton globalStore) {
                 Status status = Status.RUNNING;
-                this.driveTrainConfig = (DriveTrainConfig) globalStore.getValue("DriveTrainConfig");
 
-                this.navigationType = (NavigationType) globalStore.getValue("NavigationType");
+            this.driveTrainConfig = (DriveTrainConfig) globalStore.getValue("DriveTrainConfig");
+
+            this.navigationType = (NavigationType) globalStore.getValue("NavigationType");
 
                 if(this.navigationType == NavigationType.RELATIVE){
                     status = navigateByAprilTags(globalStore);
@@ -108,7 +125,7 @@ public class Navigate implements ActionFunction {
                return status;
         }
 
-        private Status navigateByAprilTags(GlobalStore globalStore){
+        private Status navigateByAprilTags(GlobalStoreSingleton globalStore){
                 this.driveTrainConfig = (DriveTrainConfig) globalStore.getValue("DriveTrainConfig");
 
                 getCurrentRelativePositionTarget(globalStore);
@@ -123,12 +140,12 @@ public class Navigate implements ActionFunction {
 
                 return navigateToRelativeLocation();
         }
-        private void getCurrentRelativePositionTarget(GlobalStore globalStore) {
+        private void getCurrentRelativePositionTarget(GlobalStoreSingleton globalStore) {
                 this.currentRelativePositionTarget = (RelativePosition) globalStore.getValue("CurrentTarget");
                 this.referenceTagId = currentRelativePositionTarget.referenceTagId;
         }
 
-        private void getErrorTolerances(GlobalStore globalStore){
+        private void getErrorTolerances(GlobalStoreSingleton globalStore){
                 ErrorTolerances errorTolerances =(ErrorTolerances) globalStore.getValue("ErrorTolerances");
                 this.headingErrorTolerance=errorTolerances.headingErrorTolerance;
                 this.rangeErrorTolerance = errorTolerances.rangeErrorTolerance;
@@ -136,7 +153,7 @@ public class Navigate implements ActionFunction {
         }
 
 
-        private void getCurrentDetections(GlobalStore globalStore) {
+        private void getCurrentDetections(GlobalStoreSingleton globalStore) {
                 this.currentDetections = (List<AprilTagDetection>) globalStore.getValue("CurrentDetections");
 
                 this.referenceTag = currentDetections.stream().filter(detection -> detection.metadata != null && detection.id == this.referenceTagId).findFirst().orElse(null);
@@ -153,7 +170,7 @@ public class Navigate implements ActionFunction {
                 opMode.telemetry.update();
         }
 
-        private void setPIDControllers(GlobalStore globalStore){
+        private void setPIDControllers(GlobalStoreSingleton globalStore){
                 this.pidNCoeficients = (PIDNCoeficients) globalStore.getValue("PIDCoeficients");
 
                 this.rangeController = new PIDController(this.pidNCoeficients.RKp, this.pidNCoeficients.RKi, this.pidNCoeficients.RKd,this.opMode, "R");
@@ -227,7 +244,7 @@ public class Navigate implements ActionFunction {
                 // specify the setpoint
                 this.rangeFController.setTargetPosition(referenceTag.ftcPose.range);
 
-                drive = Range.clip(this.rangeController.output(this.currentRelativePositionTarget.range, referenceTag.ftcPose.range), -this.driveTrainConfig.maxAutoSpeed, this.driveTrainConfig.maxAutoSpeed);
+                drivePower = Range.clip(this.rangeController.output(this.currentRelativePositionTarget.range, referenceTag.ftcPose.range), -this.driveTrainConfig.maxAutoSpeed, this.driveTrainConfig.maxAutoSpeed);
                 double correctionN = this.rangeController.output(this.currentRelativePositionTarget.range, referenceTag.ftcPose.range);
                 double correctionF = this.rangeFController.update(this.currentRelativePositionTarget.range);
 
@@ -247,7 +264,7 @@ public class Navigate implements ActionFunction {
                double driveF = -Range.clip(this.rangeFController.update(this.currentRelativePositionTarget.range), -this.driveTrainConfig.maxAutoSpeed, this.driveTrainConfig.maxAutoSpeed);
 
 
-                turn =   Range.clip(this.headingController.output(this.currentRelativePositionTarget.bearing, referenceTag.ftcPose.bearing), -this.driveTrainConfig.maxAutoTurn, this.driveTrainConfig.maxAutoTurn);
+                turnPower =   Range.clip(this.headingController.output(this.currentRelativePositionTarget.bearing, referenceTag.ftcPose.bearing), -this.driveTrainConfig.maxAutoTurn, this.driveTrainConfig.maxAutoTurn);
 
                 MotionState headingState = this.headingMotionProfile.get(deltaTime);
 
@@ -259,7 +276,7 @@ public class Navigate implements ActionFunction {
 
 
 
-                strafe = Range.clip(-this.yawController.output(this.currentRelativePositionTarget.yaw, referenceTag.ftcPose.yaw), -this.driveTrainConfig.maxAutoStrafe, this.driveTrainConfig.maxAutoStrafe);
+                strafePower = Range.clip(-this.yawController.output(this.currentRelativePositionTarget.yaw, referenceTag.ftcPose.yaw), -this.driveTrainConfig.maxAutoStrafe, this.driveTrainConfig.maxAutoStrafe);
 
                 MotionState yawState = this.yawMotionProfile.get(deltaTime);
 
@@ -273,7 +290,7 @@ public class Navigate implements ActionFunction {
 
                 opMode.telemetry.addData("Navigate21", "correctionN: %f correctionF: %f drive: %f driveF: %f\n" +
                                 " deltaTime: %f; state.getX(): %f; state.getV():%f; state.getA():%f\n",
-                                correctionN, correctionF, drive, driveF,
+                                correctionN, correctionF, drivePower, driveF,
                                 deltaTime, rangeState.getX(),rangeState.getV(),rangeState.getA());
 
                 opMode.telemetry.update();
@@ -285,18 +302,20 @@ public class Navigate implements ActionFunction {
                 return Status.RUNNING;
         }
 
-        private Status navigateByTrajectory(GlobalStore globalStore){
-                Trajectory currentTrajectory = (Trajectory) globalStore.getValue("CurrentTrajectory");
-                //pass trajectory to the mech drive set up with StandardLocalizer
+        private Status navigateByTrajectory(GlobalStoreSingleton globalStore){
 
-                return Status.SUCCESS;
-        }
-        private Status followTrajectories(double x, double y, double heading){
+            Trajectory currentTrajectory = (Trajectory) globalStore.getValue("CurrentTrajectory");
+            Pose2d robotStartingPose = (Pose2d) globalStore.getValue("RobotStartingPose");
 
-                //place holder to implement navigation by absolute coordinates
-                //use Roadrunner data types
+            this.drive.setPoseEstimate(robotStartingPose);
+            drive.followTrajectory(currentTrajectory);
 
-                return Status.SUCCESS;
+            globalStore.setValue("LastRobotPose", drive.getPoseEstimate());
+
+            opMode.telemetry.addData("Navigate navigateByTrajectory", drive.getPoseEstimate().toString());
+            opMode.telemetry.update();
+
+            return Status.SUCCESS;
         }
 
         private void setMotionProfiles(){

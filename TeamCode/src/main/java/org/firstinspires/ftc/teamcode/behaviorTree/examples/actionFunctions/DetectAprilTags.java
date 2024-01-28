@@ -2,31 +2,29 @@ package org.firstinspires.ftc.teamcode.behaviorTree.examples.actionFunctions;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.behaviorTree.general.GlobalStoreSingleton;
 import org.firstinspires.ftc.teamcode.behaviorTree.general.Status;
+import org.firstinspires.ftc.teamcode.subsystems.CenterStageVisionDetectorSingleton;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
-import org.firstinspires.ftc.teamcode.behaviorTree.general.GlobalStore;
 import org.firstinspires.ftc.teamcode.behaviorTree.general.ActionFunction;
-import org.firstinspires.ftc.teamcode.subsystems.AprilTagDetector;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
 public class DetectAprilTags implements ActionFunction {
-    private  AprilTagProcessor aprilTagProcessor;
-    private  AprilTagDetector aprilTagDetector;
-    private LinearOpMode opMode;
+    private final AprilTagProcessor  aprilTagProcessor;
+    private final CenterStageVisionDetectorSingleton visionDetector;
+    private final LinearOpMode opMode;
 
     public DetectAprilTags(LinearOpMode opMode) {
         this.opMode=opMode;
 
-       // if(this.aprilTagDetector == null) {
-            this.aprilTagDetector = new AprilTagDetector(opMode);
-            this.aprilTagProcessor = aprilTagDetector.getAprilTagProcessor();
-       // }
+            this.visionDetector = CenterStageVisionDetectorSingleton.getInstance(opMode);
+            this.aprilTagProcessor = visionDetector.getAprilTagProcessor();
     }
 
-    public Status perform(GlobalStore globalStore) {
+    public Status perform(GlobalStoreSingleton globalStore) {
         opMode.telemetry.addData("DetectAprilTags "," perform");
         opMode.telemetry.update();
 
@@ -51,7 +49,7 @@ public class DetectAprilTags implements ActionFunction {
              opMode.telemetry.addData("DetectAprilTags "," no tag found");
              opMode.telemetry.update();
              globalStore.removeValue("CurrentDetections");
-             return Status.FAILURE;
+             return Status.SUCCESS;
          }
     }
 

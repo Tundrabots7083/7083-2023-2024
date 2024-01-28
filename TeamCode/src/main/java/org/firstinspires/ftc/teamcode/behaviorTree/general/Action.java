@@ -15,7 +15,7 @@ public class Action extends Node {
     }
 
     @Override
-    public Status execute(GlobalStore globalStore) {
+    public Status execute(GlobalStoreSingleton globalStore) {
 
         Status status = actionFunction.perform(globalStore);
 
