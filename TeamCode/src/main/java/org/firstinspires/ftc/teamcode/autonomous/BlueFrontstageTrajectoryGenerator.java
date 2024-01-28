@@ -23,7 +23,7 @@ public class BlueFrontstageTrajectoryGenerator implements TrajectoryGenerator {
     public static final Vector2d PARKING_POSITION_CENTER = new Vector2d(55, 10);
     public static final Vector2d PARKING_POSITION_EDGE = new Vector2d(59, 59);
 
-    TeamElementLocation targetLocation;
+    private final TeamElementLocation targetLocation;
 
     public BlueFrontstageTrajectoryGenerator(TeamElementLocation targetLocation) {
         this.targetLocation = targetLocation;
@@ -46,6 +46,26 @@ public class BlueFrontstageTrajectoryGenerator implements TrajectoryGenerator {
         }
         return builder.splineToLinearHeading(spikePose, Math.toRadians(spikeHeading))
                 .build();
+    }
+
+    @Override
+    public Trajectory toArmLiftPosition(TrajectoryBuilder builder) {
+        return null;
+    }
+
+    @Override
+    public Trajectory toBackdropPosition(TrajectoryBuilder builder) {
+        return null;
+    }
+
+    @Override
+    public Trajectory toBackdropPosition(TrajectoryBuilder builder, double distance) {
+        return null;
+    }
+
+    @Override
+    public Trajectory toArmRetractionPosition(TrajectoryBuilder builder) {
+        return null;
     }
 
     @Override
