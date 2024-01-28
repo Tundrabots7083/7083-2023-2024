@@ -92,10 +92,8 @@ public class BlueAllianceBackstageParkEdge extends LinearOpMode {
         drive.followTrajectory(toArmLiftPosition);
 
         // Move the arm to the scoring position
-        telemetry.addLine("Lift arm");
-        telemetry.update();
-
         telemetry.addLine("Raise arm");
+        telemetry.update();
         arm.setTarget(Arm.Position.ScoreLow);
         while (!arm.isAtTarget()) {
             arm.update();
@@ -105,7 +103,7 @@ public class BlueAllianceBackstageParkEdge extends LinearOpMode {
         // Move to the backdrop and score the botton pixel
         telemetry.addLine("Drive to backdrop and score yellow pixel");
         telemetry.update();
-        Trajectory toBackdropPosition = trajectoryGenerator.toArmLiftPosition(drive.trajectoryBuilder(drive.getPoseEstimate(), true));
+        Trajectory toBackdropPosition = trajectoryGenerator.toBackdropPosition(drive.trajectoryBuilder(drive.getPoseEstimate(), true));
         drive.followTrajectory(toBackdropPosition);
         pixelMover.dropOffBottomPixel(telemetry);
 
