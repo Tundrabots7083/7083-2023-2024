@@ -27,60 +27,71 @@ public class BlueAllianceBackstageParkEdge extends LinearOpMode {
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
+        // Create the vision sensor
         VisionSensor visionSensor = new VisionSensor(hardwareMap.get(WebcamName.class, "Webcam Front"));
         visionSensor.initializeVisionPortal();
 
+        // Create the drivetrain and set the initial pose
         AutoMecanumDrive drive = new AutoMecanumDrive(hardwareMap, telemetry);
         drive.setPoseEstimate(STARTING_POSE);
 
+        // Create the pixel mover and arm
         PixelMover pixelMover = new PixelMover("pixelMover", "Collects pixels and moves them", hardwareMap);
         Arm arm = new Arm("arm", "Arm", hardwareMap);
 
         // Wait for webcam to initialize
         while(!visionSensor.webcamInitialized()) {}
-
         telemetry.addData("Webcam", "Initialized");
         telemetry.update();
 
         waitForStart();
 
+        // Get the team element location and, once obtained, close the vision sensor as it is no
+        // longer needed
         TeamElementLocation element = visionSensor.getTeamElementLocation();
         telemetry.addData("Element", element);
         telemetry.update();
         visionSensor.close();
 
+        // Lock the pixels into the container
         telemetry.addLine("Lock the pixels");
         telemetry.update();
         pixelMover.start(telemetry, true);
 
+        // Lower the pixel container to the intake and deposit location
         telemetry.addLine("Lower the pixel container");
         telemetry.update();
         // TODO: See if this code is needed
         // arm.setTarget(Arm.Position.Start);
         // arm.update();
         arm.setTarget(Arm.Position.Intake);
-        arm.update();
+        while (!arm.isAtTarget()) {
+            arm.update();
+        }
+        arm.stopArm();
 
+        // Create the new trajectory generator
         TrajectoryGenerator trajectoryGenerator = new BlueBackstageTrajectoryGenerator(element);
-
-        Trajectory toSpikeMark = trajectoryGenerator.toSpikeMark(drive.trajectoryBuilder(STARTING_POSE));
 
         // Drive to the correct spike mark
         telemetry.addLine("Drive to spike mark");
         telemetry.update();
+        Trajectory toSpikeMark = trajectoryGenerator.toSpikeMark(drive.trajectoryBuilder(STARTING_POSE));
         drive.followTrajectory(toSpikeMark);
 
+        // Drop off the top pixel at the spike mark
         telemetry.addLine("Drop off purple pixel");
         telemetry.update();
-        // Deposit the purple pixel
         pixelMover.dropOffTopPixel(telemetry);
 
-        telemetry.addLine("Lift arm");
+        // Drive to the proper location (edge, middle, center) in front of the backdrop at which
+        // the arm is rotated
+        telemetry.addLine("Drive to front of backdrop");
         telemetry.update();
-        // Drive to the backdrop
         Trajectory toArmLiftPosition = trajectoryGenerator.toArmLiftPosition(drive.trajectoryBuilder(drive.getPoseEstimate(), true));
         drive.followTrajectory(toArmLiftPosition);
 
+        // Move the arm to the scoring position
         telemetry.addLine("Raise arm");
         arm.setTarget(Arm.Position.ScoreLow);
         while (!arm.isAtTarget()) {
@@ -88,17 +99,20 @@ public class BlueAllianceBackstageParkEdge extends LinearOpMode {
         }
         arm.stopArm();
 
-        telemetry.addLine("Score yellow pixel on backdrop");
+        // Move to the backdrop and score the botton pixel
+        telemetry.addLine("Drive to backdrop and score yellow pixel");
         telemetry.update();
         Trajectory toBackdropPosition = trajectoryGenerator.toArmLiftPosition(drive.trajectoryBuilder(drive.getPoseEstimate(), true));
-        drive.followTrajectory(toArmLiftPosition);
+        drive.followTrajectory(toBackdropPosition);
         pixelMover.dropOffBottomPixel(telemetry);
 
+        // Backup from the backdrop so the arm won't hit the backdrop when being lowered
         telemetry.addLine("Move away from backdrop");
         telemetry.update();
         Trajectory toArmRetractionPosition = trajectoryGenerator.toArmRetractionPosition(drive.trajectoryBuilder(drive.getPoseEstimate(), true));
         drive.followTrajectory(toArmRetractionPosition);
 
+        // Lower the arm to the pixel intake position
         telemetry.addLine("Lower arm");
         telemetry.update();
         arm.setTarget(Arm.Position.Intake);
@@ -107,9 +121,9 @@ public class BlueAllianceBackstageParkEdge extends LinearOpMode {
         }
         arm.stopArm();
 
+        // Drive to the edge parking spot
         telemetry.addLine("Drive to parking spot");
         telemetry.update();
-        // Drive to the parking spot
         Trajectory toParkingSpot = trajectoryGenerator.toParkingSpotEdge(drive.trajectoryBuilder(drive.getPoseEstimate(), true));
         drive.followTrajectory(toParkingSpot);
     }
