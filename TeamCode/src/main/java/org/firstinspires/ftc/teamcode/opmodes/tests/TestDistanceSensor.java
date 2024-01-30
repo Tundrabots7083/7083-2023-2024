@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.sensors.DistanceSensor;
 
 @TeleOp(name="Distance Sensor Test", group="test")
-public class DistanceSensorTest extends OpMode {
+public class TestDistanceSensor extends OpMode {
     private DistanceSensor distanceSensor;
 
     @Override
