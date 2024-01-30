@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.processors.FirstVisionProcessor;
 import org.firstinspires.ftc.vision.VisionPortal;
 
 @Autonomous (name="First Vision Processor", group="test")
-public class TestFirstVisionProcessor extends OpMode {
+public class FirstVisionProcessorTest extends OpMode {
     private FirstVisionProcessor visionProcessor;
     private VisionPortal visionPortal;
 

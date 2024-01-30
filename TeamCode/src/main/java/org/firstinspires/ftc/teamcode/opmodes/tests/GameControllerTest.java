@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp(name = "Test Game Controller", group = "test")
-public class TestGameController extends OpMode {
+public class GameControllerTest extends OpMode {
 
     @Override
     public void init() {

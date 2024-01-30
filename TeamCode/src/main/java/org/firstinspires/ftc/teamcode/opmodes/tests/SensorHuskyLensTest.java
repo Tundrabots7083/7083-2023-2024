@@ -53,7 +53,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  */
 @TeleOp(name = "Sensor: HuskyLens", group = "test")
 //@Disabled
-public class TestSensorHuskyLens extends LinearOpMode {
+public class SensorHuskyLensTest extends LinearOpMode {
 
     //private final int READ_PERIOD = 1;
 

@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.tests.Test;
 import java.util.List;
 
 @TeleOp(name = "Test Programming Board", group = "test")
-public class TestProgrammingBoard extends OpMode {
+public class ProgrammingBoardTest extends OpMode {
     org.firstinspires.ftc.teamcode.ProgrammingBoard board = new org.firstinspires.ftc.teamcode.ProgrammingBoard();
     List<Test> tests;
     boolean wasDown, wasUp;

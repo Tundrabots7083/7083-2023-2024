@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.drive.AutoMecanumDrive;
  * encoder localizer heading may be significantly off if the track width has not been tuned).
  */
 @TeleOp(group = "test")
-public class TestLocalization extends LinearOpMode {
+public class MecanumLocalizationTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         FtcDashboard dashboard = FtcDashboard.getInstance();

@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.controls.ArmController;
 
 @TeleOp (name="Arm Test", group="test")
-public class TestArm extends OpMode {
+public class ArmTest extends OpMode {
     private ArmController armController;
     @Override
     public void init() {
