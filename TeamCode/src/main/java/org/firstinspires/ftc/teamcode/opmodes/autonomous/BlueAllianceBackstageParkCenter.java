@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.mechanisms.PixelMover;
 import org.firstinspires.ftc.teamcode.processors.TeamElementLocation;
 import org.firstinspires.ftc.teamcode.sensors.VisionSensor;
 
-@Autonomous(name="Blue Alliance Backstage Park Center", group="Autonomous")
+@Autonomous(name="Blue Alliance Backstage Park Center", group="Autonomous Blue")
 public class BlueAllianceBackstageParkCenter extends LinearOpMode {
 
     public static final Pose2d STARTING_POSE = new Pose2d(12, 63.5, Math.toRadians(-90));
