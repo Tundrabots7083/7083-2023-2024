@@ -31,7 +31,8 @@ public class BlueAllianceFrontstageParkCenter extends LinearOpMode {
         PixelMover pixelMover = new PixelMover("pixelMover", "Collects pixels and moves them", hardwareMap);
         Arm arm = new Arm("arm", "Arm", hardwareMap);
 
-        while(!visionSensor.webcamInitialized()) {}
+        while (!visionSensor.webcamInitialized()) {
+        }
 
         telemetry.addData("Webcam", "Initialized");
         telemetry.update();
@@ -115,4 +116,5 @@ public class BlueAllianceFrontstageParkCenter extends LinearOpMode {
         telemetry.update();
         Trajectory toParkingSpot = trajectoryGenerator.toParkingSpotCenter(drive.trajectoryBuilder(drive.getPoseEstimate(), true));
         drive.followTrajectory(toParkingSpot);
+    }
 }
