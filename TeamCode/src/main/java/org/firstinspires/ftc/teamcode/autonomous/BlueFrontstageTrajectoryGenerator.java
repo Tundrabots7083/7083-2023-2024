@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.processors.TeamElementLocation;
 @Config
 public class BlueFrontstageTrajectoryGenerator implements TrajectoryGenerator {
 
-    public static final Pose2d INNER_SPIKE_POSITION = new Pose2d(-39, 32, Math.toRadians(0));
+    public static final Pose2d INNER_SPIKE_POSITION = new Pose2d(-41.5, 32, Math.toRadians(0));
     public static final int INNER_SPIKE_BASE_HEADING = 180;
     public static final Pose2d MIDDLE_SPIKE_POSITION = new Pose2d(-33.5, 41, Math.toRadians(-90));
     public static final int MIDDLE_SPIKE_BASE_HEADING = -90;
@@ -19,9 +19,9 @@ public class BlueFrontstageTrajectoryGenerator implements TrajectoryGenerator {
     public static final int OUTER_SPIKE_BASE_HEADING = -90;
 
     public static final Vector2d BACKDROP_INTERMEDIATE_POSITION = new Vector2d(38, 60);
-    public static final Vector2d BACKDROP_EDGE_POSITION = new Vector2d(41.80, 44);
+    public static final Vector2d BACKDROP_EDGE_POSITION = new Vector2d(37.5, 37.0);
     public static final Vector2d BACKDROP_MIDDLE_POSITION = new Vector2d(38.5, 32.5);
-    public static final Vector2d BACKDROP_CENTER_POSITION = new Vector2d(39.6, 30.5);
+    public static final Vector2d BACKDROP_CENTER_POSITION = new Vector2d(37.0, 26.5);
 
     public static double BACKDROP_MIDDLE_ROTATE = 0;
     public static double BACKDROP_CENTER_ROTATE = 5;
