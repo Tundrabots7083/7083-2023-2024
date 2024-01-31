@@ -53,22 +53,18 @@ public class BlueAllianceBackstageParkEdge extends LinearOpMode {
         telemetry.update();
         visionSensor.close();
 
+        // Lower the pixel container to the intake and deposit location
+        telemetry.addLine("Lower the pixel container");
+        arm.setTarget(Arm.Position.Start);
+        arm.update();
+        arm.setTarget(Arm.Position.Intake);
+        arm.update();
+        arm.stopArm();
+
         // Lock the pixels into the container
         telemetry.addLine("Lock the pixels");
         telemetry.update();
         pixelMover.start(telemetry, true);
-
-        // Lower the pixel container to the intake and deposit location
-        telemetry.addLine("Lower the pixel container");
-        telemetry.update();
-        // TODO: See if this code is needed
-        // arm.setTarget(Arm.Position.Start);
-        // arm.update();
-        arm.setTarget(Arm.Position.Intake);
-        while (!arm.isAtTarget()) {
-            arm.update();
-        }
-        arm.stopArm();
 
         // Create the new trajectory generator
         TrajectoryGenerator trajectoryGenerator = new BlueBackstageTrajectoryGenerator(element);
