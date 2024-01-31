@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
@@ -7,6 +8,7 @@ import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 
 import org.firstinspires.ftc.teamcode.processors.TeamElementLocation;
 
+@Config
 public class BlueFrontstageTrajectoryGenerator implements TrajectoryGenerator {
 
     public static final Pose2d INNER_SPIKE_POSITION = new Pose2d(-39, 32, Math.toRadians(0));
@@ -16,9 +18,9 @@ public class BlueFrontstageTrajectoryGenerator implements TrajectoryGenerator {
     public static final Pose2d OUTER_SPIKE_POSITION = new Pose2d(-49, 50, Math.toRadians(-90));
     public static final int OUTER_SPIKE_BASE_HEADING = -90;
 
-    public static final Vector2d BACKDROP_INTERMEDIATE_POSITION = new Vector2d(40.5, 43);
+    public static final Vector2d BACKDROP_INTERMEDIATE_POSITION = new Vector2d(38, 60);
     public static final Vector2d BACKDROP_EDGE_POSITION = new Vector2d(41.80, 44);
-    public static final Vector2d BACKDROP_MIDDLE_POSITION = new Vector2d(39, 36.5);
+    public static final Vector2d BACKDROP_MIDDLE_POSITION = new Vector2d(38.5, 32.5);
     public static final Vector2d BACKDROP_CENTER_POSITION = new Vector2d(39.6, 30.5);
 
     public static double BACKDROP_MIDDLE_ROTATE = 0;
@@ -81,8 +83,7 @@ public class BlueFrontstageTrajectoryGenerator implements TrajectoryGenerator {
 
     @Override
     public Trajectory toBackdropPosition(TrajectoryBuilder builder) {
-        return builder.forward(BACKDROP_FORWARD_DISTANCE)
-                .build();
+        return toBackdropPosition(builder, BACKDROP_FORWARD_DISTANCE);
     }
 
     @Override
