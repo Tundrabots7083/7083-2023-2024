@@ -6,10 +6,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.controls.PixelMoverController;
-import org.firstinspires.ftc.teamcode.mechanisms.PixelMover;
 
 @TeleOp (name="Pixel Mover TeleOp", group="test")
-public class PixelMoverTeleOp extends OpMode {
+public class PixelMoverTest extends OpMode {
     private PixelMoverController pixelMoverController;
 
     @Override

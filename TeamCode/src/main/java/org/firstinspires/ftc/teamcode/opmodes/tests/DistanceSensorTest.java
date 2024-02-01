@@ -5,22 +5,25 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.controls.DroneLauncherController;
+import org.firstinspires.ftc.teamcode.sensors.DistanceSensor;
 
-@TeleOp (name="Drone Launcher Test", group="test")
-public class TestDroneLauncher extends OpMode {
-    private DroneLauncherController droneLauncherController;
+@TeleOp(name="Distance Sensor Test", group="test")
+public class DistanceSensorTest extends OpMode {
+    private DistanceSensor distanceSensor;
+
     @Override
     public void init() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        droneLauncherController = new DroneLauncherController(hardwareMap, telemetry);
+        distanceSensor = new DistanceSensor(hardwareMap, telemetry);
+
         telemetry.addLine("Initialization Complete");
         telemetry.update();
     }
 
     @Override
     public void loop() {
-        droneLauncherController.execute(gamepad1, gamepad2);
+        double distance = distanceSensor.getDistance();
+        telemetry.addData("Distance", distance);
+        telemetry.update();
     }
 }
-

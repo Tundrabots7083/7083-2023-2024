@@ -33,13 +33,8 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.firstinspires.ftc.teamcode.opmodes.tests;
 
 import com.qualcomm.hardware.dfrobot.HuskyLens;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
-import org.firstinspires.ftc.robotcore.internal.system.Deadline;
-
-import java.util.concurrent.TimeUnit;
 
 /*
  * This OpMode illustrates how to use the DFRobot HuskyLens.
@@ -56,9 +51,9 @@ import java.util.concurrent.TimeUnit;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
-@TeleOp(name = "Sensor: HuskyLens", group = "Sensor")
+@TeleOp(name = "Sensor: HuskyLens", group = "test")
 //@Disabled
-public class SensorHuskyLensOpMode extends LinearOpMode {
+public class SensorHuskyLensTest extends LinearOpMode {
 
     //private final int READ_PERIOD = 1;
 

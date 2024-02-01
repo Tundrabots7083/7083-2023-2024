@@ -24,17 +24,19 @@ public class DistanceSensor {
     }
 
     /**
-     * Gets the distance to the nearest object in inches.
-     * @return the distance to the nearest object in inches.
+     * Returns the current distance in inches
+     * @return the current distance sas measured by the sensor. If no reading is available
+     *         (perhaps the sensor is out of range), then distanceOutOfRange is returned;
      */
     public double getDistance() {
         return getDistance(DistanceUnit.INCH);
     }
 
     /**
-     * Gets the distance to the nearest object in the requested distance unit.
-     * @param du the distance unit to use in calculating the distance.
-     * @return the distance to the nearest object in the requested distance unit.
+     * Returns the current distance in the indicated distance units
+     * @param du the unit of distance in which the result should be returned
+     * @return the current distance sas measured by the sensor. If no reading is available
+     *         (perhaps the sensor is out of range), then distanceOutOfRange is returned;
      */
     public double getDistance(DistanceUnit du) {
         return distanceSensor.getDistance(du);

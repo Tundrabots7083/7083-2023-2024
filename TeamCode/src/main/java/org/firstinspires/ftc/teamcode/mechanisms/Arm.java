@@ -23,7 +23,7 @@ import java.util.Collection;
  */
 @Config
 public class Arm implements Mechanism {
-    public static int LOW_ARM_POSITION = 2900;
+    public static int LOW_ARM_POSITION = 2975;
     public static int MEDIUM_ARM_POSITION = 2815;
     public static int HIGH_ARM_POSITION = 2600;
     public static double LOW_SERVO_POSITION = 0.30;
@@ -154,12 +154,11 @@ public class Arm implements Mechanism {
 
         // Short-circuit the processing if the arm is at it's target
         if (isAtTarget()) {
-            armMotor.setPower(0);
+            stopArm();
+            telemetry.addLine("[ARM] At Target");
             return;
         }
 
-        // No "smack of doom", so update the power for the arm and lift, and make sure the container
-        // flip servo is set to the correct position.
         double power = calculate(armController, target.armPosition, armMotor.getCurrentPosition());
         telemetry.addData("[ARM] Power", power);
         armMotor.setPower(power);
